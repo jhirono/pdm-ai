@@ -1,0 +1,27 @@
+Subject: Feedback on Model Training APIs and Infrastructure
+
+Date: March 15, 2025
+Role: Senior AI Developer at FinTech Solutions Inc.
+Platform: Azure Machine Learning
+
+I've spent the last six months developing custom NLP models for financial document analysis on Azure's ML platform, and I wanted to share my detailed experience with the training infrastructure and APIs.
+
+The distributed training capabilities have significantly improved since my last major project. Running multi-node training jobs across clusters of NCasT4_v3 instances has become much more streamlined. The auto-scaling feature allowed us to dynamically adjust compute resources during different training phases, which helped optimize our cost without sacrificing performance. We observed approximately 30% reduced training time for our transformer-based models compared to our previous setup.
+
+However, I still encountered friction points when implementing custom training loops with the PyTorch integration. While the documentation for standard scenarios is excellent, the guidance for implementing more complex architectures like our hierarchical attention models remains limited. We had to resort to several workarounds to properly track metrics during distributed training, which required significant trial and error.
+
+The model versioning system is quite robust. Being able to track lineage and automatically log hyperparameters, dependencies, and performance metrics has been invaluable for our team's reproducibility requirements. The A/B testing infrastructure for evaluating model versions against each other has saved us countless hours of manual testing.
+
+The automated hyperparameter tuning service has become a core part of our workflow. The implementation of Bayesian optimization approaches has consistently found better configurations than our manual tuning. However, I would appreciate more transparency into the algorithm's decision-making process and the ability to incorporate more domain knowledge into the search space definition.
+
+For data preprocessing, the vectorized operations have significantly reduced bottlenecks. We're now processing our 200GB financial corpus in about 25% of the time it took last year. The built-in support for handling imbalanced datasets through automated resampling techniques has improved our model's precision on rare categories by nearly 15%.
+
+The experimentation tracking UI has been completely revamped and is much more intuitive. Being able to compare runs side-by-side with customizable visualizations makes it much easier to communicate results to non-technical stakeholders. However, I still find that creating custom visualization types requires too much boilerplate code.
+
+One area that needs significant improvement is the integration with feature stores. Currently, we're maintaining a separate system for feature management, which creates unnecessary complexity in our pipeline. A native, high-performance feature store with point-in-time correct lookups would dramatically simplify our architecture.
+
+The newly introduced GPU memory optimization tools have been game-changing for our larger models. The automatic mixed precision training and gradient accumulation implementations helped us increase our batch sizes by 2.4x without sacrificing accuracy.
+
+The SDK's Python typings have improved notably, and the intellisense support in VS Code now provides much more helpful context. That said, error messages when API calls fail could be more descriptive - they often point to internal errors without actionable remediation steps.
+
+In summary, Azure ML's training infrastructure has matured considerably over the past year, and it's become our team's preferred platform for model development. With some improvements to custom training workflows and feature store integration, it would address virtually all our needs for financial NLP model development.

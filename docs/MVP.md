@@ -29,8 +29,8 @@ Include validation mechanisms to ensure quality of abstractions
 3. CLI Interface Design
 A. Command Structure
 Implement two primary commands to separate distinct operations:
-- `pdm-ai consolidate`: Groups similar JTBDs/scenarios based on similarity
-- `pdm-ai abstract`: Generates higher-level abstractions from existing items
+- `pdm consolidate`: Groups similar JTBDs/scenarios based on similarity
+- `pdm abstract`: Generates higher-level abstractions from existing items
 B. Command Options
 Consolidate command options:
 - `--input <file>`: JSON file containing JTBDs/scenarios to consolidate
@@ -49,17 +49,17 @@ Abstract command options:
 C. Usage Examples
 ```bash
 # Consolidate JTBDs in the dropbox data with default settings
-pdm-ai consolidate --input output/dropbox_parsed.json
+pdm consolidate --input output/dropbox_parsed.json
 
 # Consolidate scenarios with a stricter similarity threshold
-pdm-ai consolidate --input output/dropbox_parsed.json --type scenario --threshold 0.8
+pdm consolidate --input output/dropbox_parsed.json --type scenario --threshold 0.8
 
 # Abstract specific JTBDs into a higher-level representation
-pdm-ai abstract --input output/dropbox_parsed.json --source-ids jtbd-ma3cz25p-1,jtbd-ma3cz4rz-1
+pdm abstract --input output/dropbox_parsed.json --source-ids jtbd-ma3cz25p-1,jtbd-ma3cz4rz-1
 
 # Run both operations in sequence with a specific output file
-pdm-ai consolidate --input output/dropbox_parsed.json --output output/dropbox_consolidated.json
-pdm-ai abstract --input output/dropbox_consolidated.json
+pdm consolidate --input output/dropbox_parsed.json --output output/dropbox_consolidated.json
+pdm abstract --input output/dropbox_consolidated.json
 ```
 
 4. Integration with Existing Workflow
