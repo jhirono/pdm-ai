@@ -1,0 +1,5 @@
+Team Feedback - Shared Folder Organization
+
+Challenge: Hard to find specific files within deeply nested shared team folders.
+
+Need: "When navigating complex shared folders, I want enhanced search capabilities, like searching within specific subfolders or filtering by file type/date modified, so I can locate necessary documents quickly." 

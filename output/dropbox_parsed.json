@@ -1,0 +1,1033 @@
+{
+  "project": "dropbox",
+  "generated": "2025-04-30T03:10:23.145Z",
+  "sources": [
+    {
+      "id": "source-ma3cz25p",
+      "name": "accessibility_keyboard_navigation.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/accessibility_keyboard_navigation.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3cz4rz",
+      "name": "app_idea_transfer_branding.md",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/app_idea_transfer_branding.md",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3cz7ah",
+      "name": "client_file_request_friction.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/client_file_request_friction.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3cz9we",
+      "name": "cs_log_2fa_setup.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/cs_log_2fa_setup.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3czcjc",
+      "name": "desktop_sync_performance_issue.md",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/desktop_sync_performance_issue.md",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3czf6v",
+      "name": "developer_feedback_api_rate_limits.md",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/developer_feedback_api_rate_limits.md",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3czjkm",
+      "name": "feature_idea_pdf_annotation.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/feature_idea_pdf_annotation.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3czm5x",
+      "name": "feedback_granular_permissions.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/feedback_granular_permissions.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3czoaw",
+      "name": "internal_brainstorm_paper_content_calendar.md",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/internal_brainstorm_paper_content_calendar.md",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3czqt3",
+      "name": "interview_photo_management.md",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/interview_photo_management.md",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3cztke",
+      "name": "mobile_offline_access_management.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/mobile_offline_access_management.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3czvv2",
+      "name": "organizing_shared_with_me.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/organizing_shared_with_me.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3czygy",
+      "name": "paper_document_templates.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/paper_document_templates.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3d00ws",
+      "name": "passwords_custom_fields.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/passwords_custom_fields.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3d03ri",
+      "name": "research_accidental_deletion_recovery.md",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/research_accidental_deletion_recovery.md",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3d06g8",
+      "name": "storage_usage_visualization.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/storage_usage_visualization.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3d08qs",
+      "name": "suggestion_task_manager_integration.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/suggestion_task_manager_integration.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3d0b6j",
+      "name": "support_ticket_large_file_sharing.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/support_ticket_large_file_sharing.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3d0e1b",
+      "name": "team_feedback_shared_folder_search.txt",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/team_feedback_shared_folder_search.txt",
+      "date": "2025-04-30"
+    },
+    {
+      "id": "source-ma3d0gbt",
+      "name": "usability_version_history_comparison.md",
+      "path": "/Users/jhirono/Dev/pdm-ai/docs/sample_inputs/dropbox/usability_version_history_comparison.md",
+      "date": "2025-04-30"
+    }
+  ],
+  "jtbds": [
+    {
+      "id": "jtbd-ma3cz25p-1",
+      "statement": "When I am using Dropbox, I want to access all features using keyboard navigation, so I can use the service effectively without needing a mouse.",
+      "situation": "I am using Dropbox",
+      "motivation": "access all features using keyboard navigation",
+      "outcome": "use the service effectively without needing a mouse",
+      "priority": 9,
+      "sourceQuotes": [
+        "I want all website features, including file actions (rename, move, share) and menus, to be fully accessible using Tab and Enter keys, so I can use Dropbox effectively without a mouse."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3cz25p-1"
+      ],
+      "sources": [
+        "source-ma3cz25p"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:26.541Z"
+    },
+    {
+      "id": "jtbd-ma3cz4rz-1",
+      "statement": "When using Dropbox Transfer to send files to clients, I want the option to customize the download page with my company logo and branding, so I can look more professional and reinforce our brand identity",
+      "situation": "using Dropbox Transfer to send files to clients",
+      "motivation": "customize the download page with my company logo and branding",
+      "outcome": "look more professional and reinforce our brand identity",
+      "priority": 9,
+      "sourceQuotes": [
+        "When using Dropbox Transfer to send files to clients, I want the option to customize the download page with my company logo and branding, so it looks more professional and reinforces our brand identity."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3cz4rz-1"
+      ],
+      "sources": [
+        "source-ma3cz4rz"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:29.799Z"
+    },
+    {
+      "id": "jtbd-ma3cz7ah-1",
+      "statement": "When I send a file request link to a client who doesn't have a Dropbox account, I want them to be able to upload files without being prompted multiple times to sign up or log in, so the process is smooth and doesn't deter them from sending the files.",
+      "situation": "I send a file request link to a client who doesn't have a Dropbox account",
+      "motivation": "I want them to be able to upload files without being prompted multiple times to sign up or log in",
+      "outcome": "the process is smooth and doesn't deter them from sending the files",
+      "priority": 9,
+      "sourceQuotes": [
+        "When I send a file request link to a client who doesn't have a Dropbox account, I want them to be able to upload files *without* being prompted multiple times to sign up or log in, so the process is smooth and doesn't deter them from sending the files."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3cz7ah-1"
+      ],
+      "sources": [
+        "source-ma3cz7ah"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:33.181Z"
+    },
+    {
+      "id": "jtbd-ma3cz9we-1",
+      "statement": "When setting up security features like 2FA, I want extremely clear instructions and multiple backup options, so I can feel confident I won't get locked out of my account",
+      "situation": "setting up security features like 2FA",
+      "motivation": "want extremely clear instructions and multiple backup options",
+      "outcome": "feel confident I won't get locked out of my account",
+      "priority": 9,
+      "sourceQuotes": [
+        "Found setting up 2FA slightly confusing, wanted more recovery options.",
+        "I want extremely clear instructions and multiple backup options (like recovery codes AND a backup phone number), so I feel confident I won't get locked out of my account."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3cz9we-1"
+      ],
+      "sources": [
+        "source-ma3cz9we"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:36.598Z"
+    },
+    {
+      "id": "jtbd-ma3czcjc-1",
+      "statement": "When syncing a large number of small files, I want the desktop client to be more efficient and use fewer system resources, so I can prevent my computer from slowing down significantly during the sync process.",
+      "situation": "syncing a large number of small files",
+      "motivation": "the desktop client to be more efficient and use fewer system resources",
+      "outcome": "prevent my computer from slowing down significantly during the sync process",
+      "priority": 9,
+      "sourceQuotes": [
+        "I want the desktop client to be more efficient and use fewer system resources, so my computer doesn't slow down significantly during the sync process."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3czcjc-1"
+      ],
+      "sources": [
+        "source-ma3czcjc"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:40.038Z"
+    },
+    {
+      "id": "jtbd-ma3czf6v-1",
+      "statement": "When integrating with the Dropbox API, I want clearer documentation and more predictable behavior regarding rate limits, so I can build more robust integrations that handle limits gracefully.",
+      "situation": "integrating with the Dropbox API",
+      "motivation": "clearer documentation and more predictable behavior regarding rate limits",
+      "outcome": "build more robust integrations that handle limits gracefully",
+      "priority": 9,
+      "sourceQuotes": [
+        "When integrating with the Dropbox API, I want clearer documentation and more predictable behavior regarding rate limits, perhaps with specific headers returned indicating current status, so I can build more robust integrations that handle limits gracefully."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3czf6v-1"
+      ],
+      "sources": [
+        "source-ma3czf6v"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:45.716Z"
+    },
+    {
+      "id": "jtbd-ma3czjkm-1",
+      "statement": "When I receive lecture slides as PDFs in Dropbox, I want to annotate them directly within Dropbox, so I can study and mark up documents without downloading them and using another app.",
+      "situation": "I receive lecture slides as PDFs in Dropbox",
+      "motivation": "I want to annotate them directly within Dropbox",
+      "outcome": "I can study and mark up documents without downloading them and using another app",
+      "priority": 9,
+      "sourceQuotes": [
+        "As a student who receives lecture slides as PDFs in Dropbox, I want built-in annotation tools (highlighting, notes) directly within the Dropbox preview, so that I can study and mark up documents without downloading them and using another app."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3czjkm-1"
+      ],
+      "sources": [
+        "source-ma3czjkm"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:49.076Z"
+    },
+    {
+      "id": "jtbd-ma3czm5x-1",
+      "statement": "When collaborating on sensitive documents, I want to have more granular permissions, so I can have finer control over how my shared files are used",
+      "situation": "collaborating on sensitive documents",
+      "motivation": "have more granular permissions",
+      "outcome": "have finer control over how my shared files are used",
+      "priority": 9,
+      "sourceQuotes": [
+        "As someone collaborating on sensitive documents, I want more granular permissions, like 'comment-only' access or preventing downloads for view-only users, so that I have finer control over how my shared files are used."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3czm5x-1"
+      ],
+      "sources": [
+        "source-ma3czm5x"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:51.846Z"
+    },
+    {
+      "id": "jtbd-ma3czoaw-1",
+      "statement": "When planning content calendars, I want to use specific templates and features for status tracking and task management, so I can manage our entire content workflow efficiently within Dropbox.",
+      "situation": "planning content calendars",
+      "motivation": "use specific templates and features for status tracking and task management",
+      "outcome": "manage our entire content workflow efficiently within Dropbox",
+      "priority": 9,
+      "sourceQuotes": [
+        "As a content marketing team using Paper, we want specific templates and features for planning content calendars (like status tracking, due dates, assignee fields integrated with file links), so we can manage our entire content workflow within Dropbox."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3czoaw-1"
+      ],
+      "sources": [
+        "source-ma3czoaw"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:55.093Z"
+    },
+    {
+      "id": "jtbd-ma3czqt3-1",
+      "statement": "When using Dropbox for both work and personal purposes, I want to separate camera upload destinations or have better filtering before upload, so I can prevent my vacation photos from cluttering my work folders.",
+      "situation": "using Dropbox for both work and personal purposes",
+      "motivation": "separate camera upload destinations or have better filtering before upload",
+      "outcome": "prevent my vacation photos from cluttering my work folders",
+      "priority": 9,
+      "sourceQuotes": [
+        "As someone using Dropbox for both work and personal life, I want separate camera upload destinations or better filtering *before* upload, so that my vacation photos don't clutter my work folders."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3czqt3-1"
+      ],
+      "sources": [
+        "source-ma3czqt3"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:58.668Z"
+    },
+    {
+      "id": "jtbd-ma3cztke-1",
+      "statement": "When I am traveling without internet access, I want to easily manage my offline files, so I can quickly find what I need.",
+      "situation": "I am traveling without internet access",
+      "motivation": "easily manage my offline files",
+      "outcome": "quickly find what I need",
+      "priority": 9,
+      "sourceQuotes": [
+        "Making files available offline on the mobile app is great, but managing them is tricky."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3cztke-1"
+      ],
+      "sources": [
+        "source-ma3cztke"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:01.644Z"
+    },
+    {
+      "id": "jtbd-ma3czvv2-1",
+      "statement": "When the 'Shared with Me' section gets cluttered, I want to organize items shared with me using my own folders or tags, so I can manage and find these items more effectively",
+      "situation": "the 'Shared with Me' section gets cluttered",
+      "motivation": "organize items shared with me using my own folders or tags",
+      "outcome": "manage and find these items more effectively",
+      "priority": 9,
+      "sourceQuotes": [
+        "The 'Shared with Me' section gets cluttered quickly.",
+        "I want the ability to organize items shared with me (e.g., using my own folders or tags, without affecting the owner), so I can manage and find these items more effectively."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3czvv2-1"
+      ],
+      "sources": [
+        "source-ma3czvv2"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:05.024Z"
+    },
+    {
+      "id": "jtbd-ma3czygy-1",
+      "statement": "When creating recurring documents like meeting notes or project plans in Paper, I want to use customizable templates, so I can start new documents quickly with a pre-defined structure",
+      "situation": "creating recurring documents like meeting notes or project plans in Paper",
+      "motivation": "use customizable templates",
+      "outcome": "start new documents quickly with a pre-defined structure",
+      "priority": 9,
+      "sourceQuotes": [
+        "Dropbox Paper is useful, but starting from scratch is slow",
+        "I want to use customizable templates, so I can start new documents quickly with a pre-defined structure"
+      ],
+      "relatedScenarios": [
+        "scenario-ma3czygy-1"
+      ],
+      "sources": [
+        "source-ma3czygy"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:08.186Z"
+    },
+    {
+      "id": "jtbd-ma3d00ws-001",
+      "statement": "When managing my password entries, I want to add notes or custom fields, so I can store all related login information securely in one place",
+      "situation": "managing my password entries",
+      "motivation": "add notes or custom fields",
+      "outcome": "store all related login information securely in one place",
+      "priority": 9,
+      "sourceQuotes": [
+        "I want the ability to add notes or custom fields to password entries (e.g., for security questions or setup codes), so I can store all related login information securely in one place."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3d00ws-001"
+      ],
+      "sources": [
+        "source-ma3d00ws"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:11.885Z"
+    },
+    {
+      "id": "jtbd-ma3d03ri-1",
+      "statement": "When a file or folder is deleted, especially from a shared space, I want clearer warnings about the impact on collaborators and perhaps a longer recovery window or admin controls for restoration, so accidental deletions are less disruptive.",
+      "situation": "a file or folder is deleted, especially from a shared space",
+      "motivation": "clearer warnings about the impact on collaborators and perhaps a longer recovery window or admin controls for restoration",
+      "outcome": "accidental deletions are less disruptive",
+      "priority": 9,
+      "sourceQuotes": [
+        "When a file or folder is deleted, especially from a shared space, I want clearer warnings about the impact on collaborators and perhaps a longer recovery window or admin controls for restoration, so accidental deletions are less disruptive."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3d03ri-1"
+      ],
+      "sources": [
+        "source-ma3d03ri"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:15.367Z"
+    },
+    {
+      "id": "jtbd-ma3d06g8-1",
+      "statement": "When managing my storage, I want a visual breakdown showing storage usage by folder or file type, so I can easily identify large items and clean up my account",
+      "situation": "managing my storage",
+      "motivation": "a visual breakdown showing storage usage by folder or file type",
+      "outcome": "easily identify large items and clean up my account",
+      "priority": 9,
+      "sourceQuotes": [
+        "When managing my storage, I want a visual breakdown (like a pie chart or treemap) showing storage usage by folder or file type, so I can easily identify large items and clean up my account."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3d06g8-1"
+      ],
+      "sources": [
+        "source-ma3d06g8"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:18.339Z"
+    },
+    {
+      "id": "jtbd-ma3d08qs-1",
+      "statement": "When managing projects, I want to link Dropbox files directly within tasks, so I can ensure team members have access to necessary documents.",
+      "situation": "managing projects",
+      "motivation": "link Dropbox files directly within tasks",
+      "outcome": "ensure team members have access to necessary documents",
+      "priority": 9,
+      "sourceQuotes": [
+        "It would be amazing if Dropbox files could be linked directly within Asana/Trello tasks."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3d08qs-1"
+      ],
+      "sources": [
+        "source-ma3d08qs"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:21.497Z"
+    },
+    {
+      "id": "jtbd-ma3d0b6j-1",
+      "statement": "When I need to share very large files (over 5GB) that exceed email limits, I want a simple, reliable way to send a download link through Dropbox, so my collaborators can access the files without needing special software or accounts.",
+      "situation": "I need to share very large files (over 5GB) that exceed email limits",
+      "motivation": "I want a simple, reliable way to send a download link through Dropbox",
+      "outcome": "My collaborators can access the files without needing special software or accounts",
+      "priority": 9,
+      "sourceQuotes": [
+        "When I need to share very large files (over 5GB) that exceed email limits, I want a simple, reliable way to send a download link through Dropbox, so my collaborators can access the files without needing special software or accounts."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3d0b6j-1"
+      ],
+      "sources": [
+        "source-ma3d0b6j"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:25.197Z"
+    },
+    {
+      "id": "jtbd-ma3d0e1b-1",
+      "statement": "When navigating complex shared folders, I want enhanced search capabilities, so I can locate necessary documents quickly",
+      "situation": "navigating complex shared folders",
+      "motivation": "enhanced search capabilities",
+      "outcome": "locate necessary documents quickly",
+      "priority": 9,
+      "sourceQuotes": [
+        "When navigating complex shared folders, I want enhanced search capabilities, like searching within specific subfolders or filtering by file type/date modified, so I can locate necessary documents quickly."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3d0e1b-1"
+      ],
+      "sources": [
+        "source-ma3d0e1b"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:28.167Z"
+    },
+    {
+      "id": "jtbd-ma3d0gbt-1",
+      "statement": "When I need to revert to an older version of a document, I want a side-by-side comparison view or highlighted changes between versions, so I can easily see what was modified and choose the correct version to restore.",
+      "situation": "I need to revert to an older version of a document",
+      "motivation": "I want a side-by-side comparison view or highlighted changes between versions",
+      "outcome": "I can easily see what was modified and choose the correct version to restore",
+      "priority": 9,
+      "sourceQuotes": [
+        "When I need to revert to an older version of a document, I want a side-by-side comparison view or highlighted changes between versions, so I can easily see what was modified and choose the correct version to restore."
+      ],
+      "relatedScenarios": [
+        "scenario-ma3d0gbt-1"
+      ],
+      "sources": [
+        "source-ma3d0gbt"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:31.033Z"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "scenario-ma3cz25p-1",
+      "statement": "As a user who relies on keyboard navigation, I want to use all website features with the Tab and Enter keys, so that I can navigate Dropbox without a mouse.",
+      "persona": "user who relies on keyboard navigation",
+      "action": "use all website features with the Tab and Enter keys",
+      "value": "navigate Dropbox without a mouse",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3cz25p-1"
+      ],
+      "sources": [
+        "source-ma3cz25p"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:26.541Z"
+    },
+    {
+      "id": "scenario-ma3cz4rz-1",
+      "statement": "As a business owner, I want to customize the Dropbox Transfer download page with my company's branding, so that I can enhance professionalism and strengthen brand recognition",
+      "persona": "business owner",
+      "action": "customize the Dropbox Transfer download page with my company's branding",
+      "value": "enhance professionalism and strengthen brand recognition",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3cz4rz-1"
+      ],
+      "sources": [
+        "source-ma3cz4rz"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:29.799Z"
+    },
+    {
+      "id": "scenario-ma3cz7ah-1",
+      "statement": "As a business professional, I want to ensure clients can upload files easily without needing a Dropbox account, so that I can facilitate efficient file exchanges.",
+      "persona": "business professional",
+      "action": "ensure clients can upload files easily without needing a Dropbox account",
+      "value": "facilitate efficient file exchanges",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3cz7ah-1"
+      ],
+      "sources": [
+        "source-ma3cz7ah"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:33.181Z"
+    },
+    {
+      "id": "scenario-ma3cz9we-1",
+      "statement": "As a security-conscious user, I want to understand and set up 2FA with confidence, so that I can ensure my account's safety without fear of being locked out",
+      "persona": "security-conscious user",
+      "action": "understand and set up 2FA with confidence",
+      "value": "ensure my account's safety without fear of being locked out",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3cz9we-1"
+      ],
+      "sources": [
+        "source-ma3cz9we"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:36.598Z"
+    },
+    {
+      "id": "scenario-ma3czcjc-1",
+      "statement": "As a software developer, I want to sync my code repositories efficiently, so that I can work without interruptions or slowdowns.",
+      "persona": "software developer",
+      "action": "sync my code repositories efficiently",
+      "value": "work without interruptions or slowdowns",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3czcjc-1"
+      ],
+      "sources": [
+        "source-ma3czcjc"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:40.038Z"
+    },
+    {
+      "id": "scenario-ma3czf6v-1",
+      "statement": "As a developer, I want to have clear rate limit information and documentation, so that I can ensure my application handles API limits without disruption.",
+      "persona": "developer",
+      "action": "have clear rate limit information and documentation",
+      "value": "ensure my application handles API limits without disruption",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3czf6v-1"
+      ],
+      "sources": [
+        "source-ma3czf6v"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:45.716Z"
+    },
+    {
+      "id": "scenario-ma3czjkm-1",
+      "statement": "As a student, I want to use built-in annotation tools directly within Dropbox, so that I can study and mark up documents without downloading them and using another app.",
+      "persona": "student",
+      "action": "use built-in annotation tools directly within Dropbox",
+      "value": "study and mark up documents without downloading them and using another app",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3czjkm-1"
+      ],
+      "sources": [
+        "source-ma3czjkm"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:49.076Z"
+    },
+    {
+      "id": "scenario-ma3czm5x-1",
+      "statement": "As a collaborator on sensitive documents, I want to set granular sharing permissions, so that I can control user access levels and actions",
+      "persona": "collaborator on sensitive documents",
+      "action": "set granular sharing permissions",
+      "value": "control user access levels and actions",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3czm5x-1"
+      ],
+      "sources": [
+        "source-ma3czm5x"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:51.846Z"
+    },
+    {
+      "id": "scenario-ma3czoaw-1",
+      "statement": "As a content marketing team, I want to have specific templates and features for planning and tracking content, so that I can streamline our content management process within Dropbox Paper.",
+      "persona": "content marketing team",
+      "action": "have specific templates and features for planning and tracking content",
+      "value": "streamline our content management process within Dropbox Paper",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3czoaw-1"
+      ],
+      "sources": [
+        "source-ma3czoaw"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:55.093Z"
+    },
+    {
+      "id": "scenario-ma3czqt3-1",
+      "statement": "As a Dropbox user managing both personal and work content, I want to organize my photos before they are uploaded, so that I can keep my work and personal images separate.",
+      "persona": "Dropbox user managing both personal and work content",
+      "action": "organize my photos before they are uploaded",
+      "value": "keep my work and personal images separate",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3czqt3-1"
+      ],
+      "sources": [
+        "source-ma3czqt3"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:10:58.668Z"
+    },
+    {
+      "id": "scenario-ma3cztke-1",
+      "statement": "As a frequent traveler, I want a dedicated section in the app to view and manage only my offline files, so that I can quickly find what I need without internet access.",
+      "persona": "frequent traveler",
+      "action": "access a dedicated section in the app to view and manage only my offline files",
+      "value": "quickly find what I need without internet access",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3cztke-1"
+      ],
+      "sources": [
+        "source-ma3cztke"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:01.644Z"
+    },
+    {
+      "id": "scenario-ma3czvv2-1",
+      "statement": "As a user who receives many shared files and folders, I want to organize shared items without affecting the owner, so that I can efficiently manage and access them",
+      "persona": "user who receives many shared files and folders",
+      "action": "organize shared items without affecting the owner",
+      "value": "efficiently manage and access them",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3czvv2-1"
+      ],
+      "sources": [
+        "source-ma3czvv2"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:05.024Z"
+    },
+    {
+      "id": "scenario-ma3czygy-1",
+      "statement": "As a user who frequently creates documents, I want to access and use templates, so that I can save time and maintain consistency across documents",
+      "persona": "user who frequently creates documents",
+      "action": "access and use templates",
+      "value": "save time and maintain consistency across documents",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3czygy-1"
+      ],
+      "sources": [
+        "source-ma3czygy"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:08.186Z"
+    },
+    {
+      "id": "scenario-ma3d00ws-001",
+      "statement": "As a security-conscious user, I want to add notes to my password entries, so that I can keep all information needed for logins in one secure location",
+      "persona": "security-conscious user",
+      "action": "add notes to my password entries",
+      "value": "keep all information needed for logins in one secure location",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3d00ws-001"
+      ],
+      "sources": [
+        "source-ma3d00ws"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:11.885Z"
+    },
+    {
+      "id": "scenario-ma3d03ri-1",
+      "statement": "As a collaborator, I want to receive clear notifications and have access to recovery options when a shared file is deleted, so that I can ensure continuity and prevent disruptions in our work.",
+      "persona": "collaborator",
+      "action": "receive clear notifications and have access to recovery options when a shared file is deleted",
+      "value": "ensure continuity and prevent disruptions in our work",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3d03ri-1"
+      ],
+      "sources": [
+        "source-ma3d03ri"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:15.367Z"
+    },
+    {
+      "id": "scenario-ma3d06g8-1",
+      "statement": "As a Dropbox user, I want to see a visual breakdown of my storage usage, so that I can manage my account more effectively",
+      "persona": "Dropbox user",
+      "action": "see a visual breakdown of my storage usage",
+      "value": "manage my account more effectively",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3d06g8-1"
+      ],
+      "sources": [
+        "source-ma3d06g8"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:18.339Z"
+    },
+    {
+      "id": "scenario-ma3d08qs-1",
+      "statement": "As a project manager, I want to attach specific Dropbox files or folders directly to tasks in my project management tool, so that I can ensure team members have immediate access to the relevant documents for their work.",
+      "persona": "project manager",
+      "action": "attach specific Dropbox files or folders directly to tasks in my project management tool",
+      "value": "ensure team members have immediate access to the relevant documents for their work",
+      "priority": 9,
+      "relatedJtbds": [
+        "jtbd-ma3d08qs-1"
+      ],
+      "sources": [
+        "source-ma3d08qs"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:21.497Z"
+    },
+    {
+      "id": "scenario-ma3d0b6j-1",
+      "statement": "As a collaborator, I want to receive large files easily via a download link, so that I can access them without needing special software or creating new accounts.",
+      "persona": "collaborator",
+      "action": "receive large files easily via a download link",
+      "value": "access them without needing special software or creating new accounts",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3d0b6j-1"
+      ],
+      "sources": [
+        "source-ma3d0b6j"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:25.197Z"
+    },
+    {
+      "id": "scenario-ma3d0e1b-1",
+      "statement": "As a team member, I want to easily find specific files within shared folders, so that I can save time and improve my productivity",
+      "persona": "team member",
+      "action": "easily find specific files within shared folders",
+      "value": "save time and improve my productivity",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3d0e1b-1"
+      ],
+      "sources": [
+        "source-ma3d0e1b"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:28.167Z"
+    },
+    {
+      "id": "scenario-ma3d0gbt-1",
+      "statement": "As a meticulous document editor, I want to compare different versions of a file visually, so that I can accurately restore the necessary version.",
+      "persona": "meticulous document editor",
+      "action": "compare different versions of a file visually",
+      "value": "accurately restore the necessary version",
+      "priority": 8,
+      "relatedJtbds": [
+        "jtbd-ma3d0gbt-1"
+      ],
+      "sources": [
+        "source-ma3d0gbt"
+      ],
+      "parentId": null,
+      "childIds": [],
+      "isAbstract": false,
+      "level": 1,
+      "occurrenceCount": 1,
+      "similarityScore": 1,
+      "lastUpdated": "2025-04-30T03:11:31.033Z"
+    }
+  ]
+}

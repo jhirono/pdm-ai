@@ -1,0 +1,3 @@
+Subject: Organizing 'Shared with Me'
+
+The 'Shared with Me' section gets cluttered quickly. As someone who receives many shared files and folders, I want the ability to organize items shared with me (e.g., using my own folders or tags, without affecting the owner), so I can manage and find these items more effectively. 

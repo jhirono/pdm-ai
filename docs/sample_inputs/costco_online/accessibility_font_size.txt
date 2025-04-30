@@ -1,0 +1,3 @@
+Accessibility Feedback - Font Size
+
+"As a user with visual impairment, I want the ability to increase the font size on the website and app, so that I can read product descriptions and other text comfortably." 

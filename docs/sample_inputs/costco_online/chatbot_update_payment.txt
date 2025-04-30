@@ -1,0 +1,8 @@
+Feedback via Chatbot Transcript:
+
+Agent: How can I help you today?
+User: I can't find where to update my saved credit card.
+Agent: You can manage payment methods under 'My Account' -> 'Payment Methods'.
+User: Found it, thanks. It wasn't obvious.
+
+*Implicit Need*: When my payment information changes, I want to easily locate and update my saved credit card details, so I can complete purchases without hassle. 

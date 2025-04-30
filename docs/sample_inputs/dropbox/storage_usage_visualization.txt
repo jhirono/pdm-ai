@@ -1,0 +1,3 @@
+Subject: Storage Usage Visualization
+
+It's hard to tell what's taking up the most space in my Dropbox. When managing my storage, I want a visual breakdown (like a pie chart or treemap) showing storage usage by folder or file type, so I can easily identify large items and clean up my account. 

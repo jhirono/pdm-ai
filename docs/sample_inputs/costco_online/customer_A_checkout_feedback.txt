@@ -1,0 +1,3 @@
+Subject: Checkout Process Frustration
+
+When I'm trying to buy multiple bulky items like paper towels and water bottles online, I want to see the estimated shipping cost *before* I get to the final checkout page, so I can decide if the order is worth placing or if I should just go to the store. It's annoying to fill everything out only to find the shipping is too high. 

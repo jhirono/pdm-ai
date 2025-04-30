@@ -1,0 +1,3 @@
+Subject: Paper Document Templates
+
+Dropbox Paper is useful, but starting from scratch is slow. When creating recurring documents like meeting notes or project plans in Paper, I want to use customizable templates, so I can start new documents quickly with a pre-defined structure. 

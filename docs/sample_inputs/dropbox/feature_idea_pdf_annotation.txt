@@ -1,0 +1,3 @@
+Subject: Feature Idea - PDF Annotation
+
+As a student who receives lecture slides as PDFs in Dropbox, I want built-in annotation tools (highlighting, notes) directly within the Dropbox preview, so that I can study and mark up documents without downloading them and using another app. 
