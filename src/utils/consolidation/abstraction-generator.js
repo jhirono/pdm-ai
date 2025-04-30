@@ -45,7 +45,7 @@ class AbstractionGenerator {
       const statements = itemCluster.map(item => item.statement);
       
       // Generate an abstract item using the LLM
-      const response = await this._callLLMForAbstraction(statements, selectedModel);
+      const response = await this._callLLMForAbstraction(statements, selectedModel, options.type || 'jtbd');
       
       if (!response) {
         throw new Error('Failed to generate abstraction');
@@ -64,10 +64,11 @@ class AbstractionGenerator {
    * Call the LLM to generate an abstraction from a list of JTBD statements
    * @param {Array<string>} statements - List of JTBD statements
    * @param {string} model - LLM model to use
+   * @param {string} type - Type of items ('jtbd' or 'scenario')
    * @returns {Promise<Object>} LLM response with abstraction
    * @private
    */
-  async _callLLMForAbstraction(statements, model) {
+  async _callLLMForAbstraction(statements, model, type = 'jtbd') {
     if (!this.apiKey) {
       throw new Error("No API key available for OpenAI. Set LLM_API_KEY in your .env file");
     }
@@ -75,8 +76,31 @@ class AbstractionGenerator {
     // Format statements for the prompt
     const formattedStatements = statements.map((stmt, i) => `${i + 1}. ${stmt}`).join('\n');
 
-    // Create prompt for generating abstraction
-    const prompt = `I have a cluster of similar Jobs-to-be-Done (JTBD) statements from customer feedback. 
+    // Create prompt for generating abstraction based on type
+    let prompt;
+    if (type === 'scenario') {
+      prompt = `I have a cluster of similar user scenarios from customer feedback. 
+Please create a higher-level abstract scenario that encompasses all of these more specific scenarios.
+
+Here are the specific scenarios:
+${formattedStatements}
+
+Please generate:
+1. A higher-level abstract scenario statement that encompasses all of these
+2. A priority score (1-10) for this abstract scenario
+3. A brief explanation of how this abstraction relates to the specific scenarios
+
+Format your response as a JSON object with these keys:
+- statement: The full abstract scenario statement
+- situation: The situation component (if applicable)
+- motivation: The motivation component (if applicable)
+- outcome: The outcome component (if applicable)
+- priority: A number between 1-10
+- explanation: A brief explanation of this abstraction
+`;
+    } else {
+      // Default JTBD prompt
+      prompt = `I have a cluster of similar Jobs-to-be-Done (JTBD) statements from customer feedback. 
 Please create a higher-level abstract JTBD that encompasses all of these more specific JTBDs.
 
 Each JTBD follows the format: "When [situation], I want to [motivation], so I can [expected outcome]"
@@ -98,6 +122,7 @@ Format your response as a JSON object with these keys:
 - priority: A number between 1-10
 - explanation: A brief explanation of this abstraction
 `;
+    }
 
     try {
       const response = await this._callOpenAIAPI(prompt, model);
@@ -125,7 +150,7 @@ Format your response as a JSON object with these keys:
         messages: [
           {
             role: "system",
-            content: "You are an expert product manager who specializes in creating Jobs-to-be-Done (JTBD) statements that concisely capture user needs."
+            content: "You are an expert product manager who specializes in creating product insights that concisely capture user needs, whether as Jobs-to-be-Done (JTBD) statements or user scenarios."
           },
           {
             role: "user",
