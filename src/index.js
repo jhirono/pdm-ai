@@ -6,6 +6,7 @@ const chalk = require('chalk');
 const parseCommand = require('./commands/parse');
 const consolidateCommand = require('./commands/consolidate');
 const abstractCommand = require('./commands/abstract');
+const visualizeCommand = require('./commands/visualize');
 
 // Set up CLI program details
 program
@@ -17,6 +18,7 @@ program
 parseCommand(program);
 consolidateCommand(program);
 abstractCommand(program);
+visualizeCommand(program);
 
 // Handle unknown commands
 program.on('command:*', (operands) => {

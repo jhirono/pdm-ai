@@ -11,16 +11,15 @@ const consolidationManager = require('../utils/consolidation/consolidation-manag
 function consolidateCommand(program) {
   program
     .command('consolidate')
-    .description('Consolidate JTBDs and their related scenarios using JTBD-first approach')
-    .argument('<input>', 'Input JSON file with parsed JTBDs/scenarios')
+    .description('Consolidate JTBDs using semantic clustering')
+    .argument('<input>', 'Input JSON file with parsed JTBDs')
     .option('-o, --output <path>', 'Output file path for consolidated results (default: new file with timestamp)')
-    .option('-th, --threshold <value>', 'Similarity threshold for JTBD clustering (0-1)', '0.7')
-    .option('-sth, --scenario-threshold <value>', 'Similarity threshold for scenario clustering (0-1)', '0.7')
+    .option('-th, --threshold <value>', 'Similarity threshold for JTBD clustering (0-1)', '0.5')
     .option('-m, --method <method>', 'Similarity method (semantic or keyword)', 'semantic')
     .option('-v, --verbose', 'Show detailed output during consolidation', false)
     .action(async (input, options) => {
       try {
-        console.log(chalk.blue(`Consolidating JTBDs and scenarios in: ${input}`));
+        console.log(chalk.blue(`Consolidating JTBDs in: ${input}`));
         
         // Validate input file exists
         const inputPath = path.resolve(process.cwd(), input);
@@ -41,13 +40,6 @@ function consolidateCommand(program) {
           process.exit(1);
         }
         
-        // Validate scenario threshold value
-        const scenarioThreshold = parseFloat(options.scenarioThreshold);
-        if (isNaN(scenarioThreshold) || scenarioThreshold < 0 || scenarioThreshold > 1) {
-          console.error(chalk.red(`Error: Scenario threshold must be a number between 0 and 1`));
-          process.exit(1);
-        }
-        
         // Validate method
         if (!['semantic', 'keyword'].includes(options.method)) {
           console.error(chalk.red(`Error: Method must be 'semantic' or 'keyword'`));
@@ -56,33 +48,28 @@ function consolidateCommand(program) {
         
         // Configure options for consolidation
         const consolidationOptions = {
-          jtbdThreshold: threshold,
-          scenarioThreshold: scenarioThreshold,
+          threshold: threshold,
           method: options.method,
           verbose: options.verbose
         };
         
-        console.log(chalk.blue(`Using ${options.method} method with JTBD threshold: ${threshold} and scenario threshold: ${scenarioThreshold}`));
+        console.log(chalk.blue(`Using ${options.method} method with JTBD threshold: ${threshold}`));
         console.log(chalk.blue(`Output will be saved to a new file${outputPath ? ': ' + outputPath : ' with timestamp'}`));
         
-        // Run consolidation process with JTBD-first approach
-        const result = await consolidationManager.consolidateJTBDFirst(
+        // Run consolidation process for JTBDs only
+        const result = await consolidationManager.consolidateJTBDs(
           inputPath, 
           outputPath, 
           consolidationOptions
         );
         
         // Print summary
-        const jtbdAbstractCount = result.consolidation?.jtbdConsolidation?.abstractItems || 0;
-        const scenarioAbstractCount = result.consolidation?.scenarioConsolidation?.abstractItems || 0;
+        const jtbdAbstractCount = result.consolidation?.abstractItems || 0;
         const totalJtbdCount = result.jtbds.length;
-        const totalScenarioCount = result.scenarios?.length || 0;
           
         console.log(chalk.green(`✓ Consolidation complete!`));
         console.log(chalk.green(`  - Generated ${jtbdAbstractCount} abstract JTBDs`));
-        console.log(chalk.green(`  - Generated ${scenarioAbstractCount} abstract scenarios`));
         console.log(chalk.green(`  - Total JTBDs: ${totalJtbdCount}`));
-        console.log(chalk.green(`  - Total scenarios: ${totalScenarioCount}`));
         
       } catch (error) {
         console.error(chalk.red(`Error: ${error.message}`));
