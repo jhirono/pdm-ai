@@ -22,7 +22,7 @@ class ConsolidationManager {
       const defaultOptions = {
         threshold: 0.5,         // Similarity threshold (changed from 0.7 to 0.5)
         method: 'semantic',     // 'semantic' or 'keyword'
-        model: process.env.LLM_MODEL || config.llm?.model, // Use environment variable or config
+        model: process.env.LLM_MODEL, // Use LLM_MODEL directly without fallback
         verbose: false          // Whether to log detailed information
       };
       
@@ -98,7 +98,7 @@ class ConsolidationManager {
         
         try {
           const abstractItem = await abstractionGenerator.generateAbstraction(cluster, {
-            model: opts.model,
+            model: opts.model, // Pass the model from environment or options
             type: 'jtbd'
           });
           

@@ -2,7 +2,7 @@
 const claudeParser = require('./models/claude-parser');
 const geminiParser = require('./models/gemini-parser');
 const openaiParser = require('./models/openai-parser');
-const config = require('../utils/config');
+const config = require('../config');
 
 /**
  * Get the appropriate parser based on configuration or specified type
@@ -16,6 +16,7 @@ function getParser(type) {
   // Select the parser based on the determined type
   switch (parserType.toLowerCase()) {
     case 'gemini':
+    case 'google':
       return geminiParser;
     case 'openai':
       return openaiParser;

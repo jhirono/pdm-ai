@@ -1,26 +1,26 @@
-// src/parsers/models/openai-parser.js
+// src/utils/parsers/models/claude-parser.js
 const https = require('https');
 const BaseParser = require('../base-parser');
-const config = require('../../utils/config');
+const config = require('../../config');
 require('dotenv').config();
 
 /**
- * OpenAI-specific parser implementation (GPT models)
+ * Claude-specific parser implementation
  */
-class OpenAIParser extends BaseParser {
+class ClaudeParser extends BaseParser {
   /**
-   * Call the OpenAI API to extract JTBDs and scenarios
+   * Call the Claude API to extract JTBDs and scenarios
    * @param {string} content - The content to parse
    * @param {Object} fileInfo - Information about the file
    * @returns {Promise<Object>} Parsed JTBDs and scenarios
    */
   async callModelAPI(content, fileInfo) {
     try {
-      console.log("Calling OpenAI API...");
+      console.log("Calling Claude API directly via HTTPS...");
       
-      const apiKey = config.openai.apiKey;
+      const apiKey = config.anthropic.apiKey;
       if (!apiKey) {
-        throw new Error("No API key available for OpenAI. Set LLM_API_KEY in your .env file");
+        throw new Error("No API key available for Claude. Set ANTHROPIC_API_KEY in your .env file");
       }
       
       // Get model configuration from global config
@@ -37,7 +37,7 @@ class OpenAIParser extends BaseParser {
       let response = null;
       
       try {
-        response = await this.makeOpenAIAPIRequest(
+        response = await this.makeClaudeAPIRequest(
           apiKey, 
           systemPrompt, 
           userPrompt, 
@@ -53,14 +53,14 @@ class OpenAIParser extends BaseParser {
         return null;
       }
     } catch (apiError) {
-      console.error(`OpenAI API call failed: ${apiError.message}`);
+      console.error(`Claude API call failed: ${apiError.message}`);
       return null;
     }
   }
 
   /**
-   * Create system message for OpenAI
-   * @returns {string} System message
+   * Create system prompt for Claude
+   * @returns {string} System prompt
    */
   createSystemPrompt() {
     return `You are an expert product manager skilled at extracting customer insights from feedback.
@@ -70,9 +70,9 @@ Do not include ANY text outside of the JSON object.`;
   }
 
   /**
-   * Create user message for OpenAI
+   * Create user prompt for Claude
    * @param {string} content - The content to create a prompt for
-   * @returns {string} User message
+   * @returns {string} User prompt
    */
   createPrompt(content) {
     return `Analyze the following customer feedback and extract:
@@ -118,55 +118,42 @@ IMPORTANT: Respond with ONLY the JSON object. Do not include any text outside th
   }
 
   /**
-   * Make a request to the OpenAI API
-   * @param {string} apiKey - OpenAI API key
-   * @param {string} systemMessage - System message
-   * @param {string} userMessage - User message
-   * @param {string} model - OpenAI model name
-   * @param {number} maxTokens - Maximum tokens to generate
-   * @param {number} temperature - Temperature setting
-   * @returns {Promise<string>} OpenAI API response
+   * Make a direct HTTPS request to Claude API
+   * @param {string} apiKey - Claude API key
+   * @param {string} systemPrompt - System prompt
+   * @param {string} userPrompt - User prompt
+   * @param {string} model - Claude model to use
+   * @param {number} maxTokens - Maximum tokens for response
+   * @param {number} temperature - Temperature for response generation
+   * @returns {Promise<string>} Claude API response
    */
-  makeOpenAIAPIRequest(apiKey, systemMessage, userMessage, model, maxTokens, temperature) {
+  makeClaudeAPIRequest(apiKey, systemPrompt, userPrompt, model, maxTokens, temperature) {
     return new Promise((resolve, reject) => {
       // Set a 3-minute timeout for the API call
       const TIMEOUT_MS = 180000;
       
       const requestData = {
         model: model,
+        max_tokens: maxTokens,
+        temperature: temperature,
+        system: systemPrompt,
         messages: [
           {
-            role: "system",
-            content: systemMessage
-          },
-          {
             role: "user",
-            content: userMessage
+            content: userPrompt
           }
         ]
       };
       
-      // Handle model-specific parameters
-      if (model.startsWith('o3') || model.startsWith('o4')) {
-        // o3 and o4 models use max_completion_tokens instead of max_tokens
-        requestData.max_completion_tokens = maxTokens;
-        
-        // o3 and o4 models don't support temperature parameter
-        // Do not set temperature parameter for these models
-      } else {
-        // Other models use max_tokens and support custom temperature
-        requestData.max_tokens = maxTokens;
-        requestData.temperature = temperature;
-      }
-      
       const options = {
-        hostname: 'api.openai.com',
+        hostname: 'api.anthropic.com',
         port: 443,
-        path: '/v1/chat/completions',
+        path: '/v1/messages',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
         },
         timeout: TIMEOUT_MS
       };
@@ -192,14 +179,12 @@ IMPORTANT: Respond with ONLY the JSON object. Do not include any text outside th
             }
             
             const response = JSON.parse(data);
-            const textContent = response.choices && 
-                                response.choices[0] && 
-                                response.choices[0].message && 
-                                response.choices[0].message.content;
-            
-            // Return the text content or empty string
-            resolve(textContent || "");
+            // If we can't get the text from the response, return an empty string instead of null
+            // This allows the fallback mechanisms to run instead of erroring out
+            resolve(response.content && response.content[0] && response.content[0].text ? response.content[0].text : "");
           } catch (e) {
+            // If we can't parse the API response, don't reject with an error
+            // Instead, return an empty string so the fallback mechanisms can run
             console.log(`Failed to parse API response: ${e.message}. Using empty string.`);
             resolve("");
           }
@@ -233,7 +218,7 @@ IMPORTANT: Respond with ONLY the JSON object. Do not include any text outside th
     let parsedResponse = null;
     
     // Strategy 1: Try to find a JSON block with ```json markers
-    const jsonBlockMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    const jsonBlockMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
     if (jsonBlockMatch && jsonBlockMatch[1]) {
       try {
         parsedResponse = JSON.parse(jsonBlockMatch[1].trim());
@@ -283,4 +268,4 @@ IMPORTANT: Respond with ONLY the JSON object. Do not include any text outside th
   }
 }
 
-module.exports = new OpenAIParser();
+module.exports = new ClaudeParser();

@@ -2,7 +2,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
-const parsers = require('../parsers');
+const parsers = require('../utils/parsers');
 const config = require('../utils/config');
 
 /**
@@ -16,36 +16,12 @@ function parseCommand(program) {
     .argument('<source>', 'Source file or directory to parse')
     .option('-o, --output <path>', 'Output file path for JSON results')
     .option('-r, --recursive', 'Recursively parse directories', false)
-    .option('-m, --model <model>', 'Override the model to use for parsing')
-    .option('-p, --parser <parser>', 'Override the parser to use (claude, gemini, openai)')
-    .option('-d, --deduplicate', 'Deduplicate similar JTBDs and scenarios', false)
     .action(async (source, options) => {
       try {
         console.log(chalk.blue(`Parsing source: ${source}`));
         
-        // Update config if model override is provided
-        if (options.model) {
-          config.model = options.model;
-          config.parserType = config.determineParserType(options.model);
-          console.log(chalk.blue(`Using model override: ${options.model} (${config.parserType} parser)`));
-        }
-        
-        // Get the appropriate parser
-        const parser = options.parser 
-          ? parsers.getParser(options.parser) 
-          : parsers.getParser();
-        
-        // Verify if the selected parser has the required API key
-        const parserType = options.parser || config.parserType;
-        if (!parsers.canUseParser(parserType)) {
-          const fallbackParser = parsers.getFallbackParser();
-          if (fallbackParser) {
-            console.log(chalk.yellow(`Warning: No API key for ${parserType} parser. Using fallback parser.`));
-          } else {
-            console.error(chalk.red(`Error: No API keys available for any parser. Please set them in .env file.`));
-            process.exit(1);
-          }
-        }
+        // Get the default parser
+        const parser = parsers.getParser();
         
         console.log(chalk.blue(`Using ${parser.constructor.name} with model: ${config.model}`));
         console.log(chalk.blue(`Max tokens: ${config.maxTokens}, Temperature: ${config.temperature}`));
@@ -67,7 +43,7 @@ function parseCommand(program) {
           results = await parseFile(sourcePath, parser);
         } else if (stats.isDirectory()) {
           console.log(chalk.green(`Parsing directory: ${sourcePath}`));
-          results = await parseDirectory(sourcePath, options.recursive, parser, options.deduplicate);
+          results = await parseDirectory(sourcePath, options.recursive, parser);
         } else {
           console.error(chalk.red(`Error: Source is neither a file nor directory: ${sourcePath}`));
           process.exit(1);
@@ -171,10 +147,9 @@ async function parseFile(filePath, parser) {
  * @param {string} dirPath - Path to the directory to parse
  * @param {boolean} recursive - Whether to parse subdirectories recursively
  * @param {Object} parser - Parser to use
- * @param {boolean} deduplicate - Whether to deduplicate similar JTBDs and scenarios
  * @returns {Object} Combined parsed results
  */
-async function parseDirectory(dirPath, recursive, parser, deduplicate = false) {
+async function parseDirectory(dirPath, recursive, parser) {
   try {
     const files = await getFiles(dirPath, recursive);
     const supportedExtensions = ['.txt', '.md'];
@@ -270,16 +245,6 @@ async function parseDirectory(dirPath, recursive, parser, deduplicate = false) {
     
     if (hasErrors) {
       console.log(chalk.yellow('Warning: Some files had parsing errors, but processing continued.'));
-    }
-    
-    // Optionally deduplicate similar JTBDs and scenarios
-    if (deduplicate) {
-      console.log(chalk.blue('Deduplicating similar JTBDs and scenarios...'));
-      // Simple deduplication based on similarity of statements
-      // More sophisticated approaches could be implemented
-      
-      // For now, just log the potential feature
-      console.log(chalk.gray('Deduplication functionality is planned for future implementation.'));
     }
     
     return results;

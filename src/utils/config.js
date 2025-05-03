@@ -9,29 +9,43 @@ if (result.error) {
   console.warn('Warning: .env file not found or cannot be read. Using environment variables only.');
 }
 
-// Check for API keys - use only generic LLM_API_KEY
-const llmApiKey = process.env.LLM_API_KEY;
-const openaiApiKey = process.env.OPENAI_API_KEY || process.env.LLM_API_KEY;
-const googleApiKey = process.env.GOOGLE_API_KEY || process.env.LLM_API_KEY;
+// Get provider-specific API keys without fallback to generic LLM_API_KEY
+const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
+const openaiApiKey = process.env.OPENAI_API_KEY;
+const googleApiKey = process.env.GOOGLE_API_KEY;
 
-// Get model configuration (with validation)
+// Setup embedding API key with fallback chain (keeping embedding fallback to OpenAI)
+const embeddingApiKey = process.env.EMBEDDING_API_KEY || openaiApiKey;
+// Setup embedding model with default
+const embeddingModel = process.env.EMBEDDING_MODEL || 'text-embedding-3-large';
+
+// Get model configuration for parsing
 const model = process.env.LLM_MODEL || process.env.MODEL || 'claude-3-7-sonnet-20250219';
 const maxTokens = validateMaxTokens(process.env.MAX_TOKENS || '4000');
 const temperature = validateTemperature(process.env.TEMPERATURE || '0.7');
 
+// Use the same model for abstraction as specified in LLM_MODEL - no fallback needed
+const abstractionModel = process.env.LLM_MODEL;
+
+// Get provider configuration - allow explicitly setting the provider
+const explicitProvider = process.env.LLM_PROVIDER ? process.env.LLM_PROVIDER.toLowerCase() : null;
+
 // Log available API keys
-if (llmApiKey) {
-  console.log(`LLM API Key: Available (length: ${llmApiKey.length})`);
+if (anthropicApiKey) {
+  console.log(`Anthropic API Key: Available (length: ${anthropicApiKey.length})`);
 }
-if (openaiApiKey && openaiApiKey !== llmApiKey) {
+if (openaiApiKey) {
   console.log(`OpenAI API Key: Available (length: ${openaiApiKey.length})`);
 }
-if (googleApiKey && googleApiKey !== llmApiKey) {
+if (googleApiKey) {
   console.log(`Google API Key: Available (length: ${googleApiKey.length})`);
 }
+if (embeddingApiKey && embeddingApiKey !== openaiApiKey) {
+  console.log(`Embedding API Key: Available (length: ${embeddingApiKey.length}) [Model: ${embeddingModel}]`);
+}
 
-// Determine parser type based on model name
-const parserType = determineParserType(model);
+// Determine parser type based on explicit provider or model name
+const parserType = explicitProvider || determineParserType(model);
 console.log(`Selected model: ${model} (using ${parserType} parser)`);
 
 const config = {
@@ -43,7 +57,7 @@ const config = {
   
   // API configurations
   anthropic: {
-    apiKey: llmApiKey,
+    apiKey: anthropicApiKey,
     models: ['claude-3-7-sonnet-20250219', 'claude-3-opus', 'claude-3-5-sonnet', 'claude-3-haiku']
   },
   
@@ -55,6 +69,18 @@ const config = {
   openai: {
     apiKey: openaiApiKey,
     models: ['o4-mini', 'gpt-4', 'gpt-4o', 'gpt-3.5-turbo']
+  },
+  
+  // Embedding configuration
+  embedding: {
+    apiKey: embeddingApiKey,
+    model: embeddingModel
+  },
+  
+  // LLM configuration (specifically for abstraction)
+  llm: {
+    apiKey: openaiApiKey,
+    model: abstractionModel
   },
   
   // Default paths

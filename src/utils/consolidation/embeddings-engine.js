@@ -7,8 +7,10 @@ const config = require('../config');
  */
 class EmbeddingsEngine {
   constructor() {
-    this.apiKey = config.openai.apiKey;
-    this.embeddingModel = 'text-embedding-3-large'; // Using OpenAI's more advanced embedding model
+    // Use embedding configuration from config
+    this.apiKey = config.embedding.apiKey;
+    this.embeddingModel = config.embedding.model;
+    
     this.embeddings = {}; // Cache of generated embeddings
   }
 
