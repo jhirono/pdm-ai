@@ -24,6 +24,10 @@ const model = process.env.LLM_MODEL || process.env.MODEL || 'claude-3-7-sonnet-2
 const maxTokens = validateMaxTokens(process.env.MAX_TOKENS || '4000');
 const temperature = validateTemperature(process.env.TEMPERATURE || '0.7');
 
+// Get language configuration
+const language = process.env.LANGUAGE || 'en';
+console.log(`Output language: ${language}`);
+
 // Use the same model for abstraction as specified in LLM_MODEL - no fallback needed
 const abstractionModel = process.env.LLM_MODEL;
 
@@ -54,6 +58,9 @@ const config = {
   parserType: parserType,
   maxTokens: maxTokens,
   temperature: temperature,
+  
+  // Language configuration
+  language: language,
   
   // API configurations
   anthropic: {

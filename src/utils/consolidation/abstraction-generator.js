@@ -11,6 +11,9 @@ class AbstractionGenerator {
     this.openaiApiKey = process.env.OPENAI_API_KEY || config.openai?.apiKey;
     this.googleApiKey = process.env.GOOGLE_API_KEY || config.google?.apiKey;
     this.anthropicApiKey = process.env.ANTHROPIC_API_KEY || config.anthropic?.apiKey;
+    
+    // Get language configuration
+    this.language = config.language || 'en';
   }
 
   /**
@@ -86,10 +89,59 @@ class AbstractionGenerator {
     // Format statements for the prompt
     const formattedStatements = statements.map((stmt, i) => `${i + 1}. ${stmt}`).join('\n');
 
-    // Create prompt for generating abstraction based on type
+    // Create prompt for generating abstraction based on type and language
     let prompt;
-    if (type === 'scenario') {
-      prompt = `I have a cluster of similar user scenarios from customer feedback. 
+    
+    if (this.language === 'ja') {
+      if (type === 'scenario') {
+        prompt = `お客様からのフィードバックから抽出された類似のユーザーシナリオのクラスターがあります。
+これらのより具体的なシナリオをすべて包含する、より高レベルの抽象的なシナリオを作成してください。
+
+以下が具体的なシナリオです：
+${formattedStatements}
+
+以下を生成してください：
+1. これらすべてを包含するより高レベルの抽象的なシナリオのステートメント
+2. この抽象的なシナリオの優先度スコア（1-10）
+3. この抽象化がどのように具体的なシナリオと関連しているかの簡単な説明
+
+レスポンスを次のキーを持つJSONオブジェクトとしてフォーマットしてください：
+- statement: 抽象的なシナリオのフルステートメント
+- situation: 状況コンポーネント（該当する場合）
+- motivation: 動機コンポーネント（該当する場合）
+- outcome: 成果コンポーネント（該当する場合）
+- priority: 1-10の間の数値
+- explanation: この抽象化についての簡単な説明
+`;
+      } else {
+        // JTBD prompt in Japanese
+        prompt = `お客様のフィードバックから抽出された類似のJobs-to-be-Done（JTBD）ステートメントのクラスターがあります。
+これらのより具体的なJTBDをすべて包含する、より高レベルの抽象的なJTBDを作成してください。
+
+各JTBDは「[状況]のとき、[動機]したい、そうすれば[期待される結果]できる」の形式に従っています。
+
+以下が具体的なJTBDです：
+${formattedStatements}
+
+以下を生成してください：
+1. これらすべてを包含するより高レベルの抽象的なJTBDステートメントを、同じ「[状況]のとき、[動機]したい、そうすれば[期待される結果]できる」の形式を使って
+2. 抽出された状況、動機、成果のコンポーネント
+3. この抽象的なJTBDの優先度スコア（1-10）
+4. この抽象化がどのように具体的なJTBDと関連しているかの簡単な説明
+
+レスポンスを次のキーを持つJSONオブジェクトとしてフォーマットしてください：
+- statement: 抽象的なJTBDのフルステートメント
+- situation: 状況コンポーネント
+- motivation: 動機コンポーネント
+- outcome: 成果コンポーネント
+- priority: 1-10の間の数値
+- explanation: この抽象化についての簡単な説明
+`;
+      }
+    } else {
+      // Default English prompts
+      if (type === 'scenario') {
+        prompt = `I have a cluster of similar user scenarios from customer feedback. 
 Please create a higher-level abstract scenario that encompasses all of these more specific scenarios.
 
 Here are the specific scenarios:
@@ -108,9 +160,9 @@ Format your response as a JSON object with these keys:
 - priority: A number between 1-10
 - explanation: A brief explanation of this abstraction
 `;
-    } else {
-      // Default JTBD prompt
-      prompt = `I have a cluster of similar Jobs-to-be-Done (JTBD) statements from customer feedback. 
+      } else {
+        // Default JTBD prompt
+        prompt = `I have a cluster of similar Jobs-to-be-Done (JTBD) statements from customer feedback. 
 Please create a higher-level abstract JTBD that encompasses all of these more specific JTBDs.
 
 Each JTBD follows the format: "When [situation], I want to [motivation], so I can [expected outcome]"
@@ -132,6 +184,7 @@ Format your response as a JSON object with these keys:
 - priority: A number between 1-10
 - explanation: A brief explanation of this abstraction
 `;
+      }
     }
 
     try {
