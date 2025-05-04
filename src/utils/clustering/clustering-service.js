@@ -18,6 +18,14 @@ async function generateHierarchicalClusters(items, options = {}) {
       logger.info(`Clustering ${items.length} scenarios...`);
     }
     
+    // Check if we have existing clusters to preserve (for incremental processing)
+    const existingClusters = options.existingClusters || null;
+    const preserveExisting = existingClusters !== null;
+    
+    if (preserveExisting && verbose) {
+      logger.debug('Using existing clusters for incremental processing');
+    }
+    
     // Generate embeddings for items
     const texts = items.map(item => item.statement);
     const embeddings = await embeddingService.getEmbeddings(texts);
@@ -25,16 +33,37 @@ async function generateHierarchicalClusters(items, options = {}) {
     // Calculate similarity matrix
     const similarityMatrix = calculateSimilarityMatrix(embeddings);
     
-    // First layer clustering
-    logger.debug(`Calculating optimal threshold for ${items.length} scenarios at layer 1`);
-    const firstLayerResult = await adaptiveClustering.findOptimalThreshold(
-      similarityMatrix,
-      items,
-      (matrix, items, threshold) => clusterItems(matrix, items, threshold),
-      { targetLayer: 1, verbose }
-    );
+    // First layer clustering - adapt based on whether we're preserving existing clusters
+    let firstLayerClusters;
+    let firstLayerResult;
     
-    const firstLayerClusters = firstLayerResult.clusters;
+    if (preserveExisting && Object.keys(existingClusters.layer1).length > 0) {
+      // Use existing clusters and assign new items to the closest cluster
+      if (verbose) {
+        logger.debug(`Preserving ${Object.keys(existingClusters.layer1).length} existing first-layer clusters`);
+      }
+      
+      // We're going to build a result that mimics what would come from adaptive clustering
+      firstLayerResult = await preserveAndExtendClusters(
+        items, 
+        embeddings, 
+        existingClusters.layer1,
+        options.layer1Threshold
+      );
+      
+      firstLayerClusters = firstLayerResult.clusters;
+    } else {
+      // Generate new clusters from scratch
+      logger.debug(`Calculating optimal threshold for ${items.length} scenarios at layer 1`);
+      firstLayerResult = await adaptiveClustering.findOptimalThreshold(
+        similarityMatrix,
+        items,
+        (matrix, items, threshold) => clusterItems(matrix, items, threshold),
+        { targetLayer: 1, verbose }
+      );
+      
+      firstLayerClusters = firstLayerResult.clusters;
+    }
     
     // Map items to first layer cluster IDs
     const itemToFirstLayerCluster = {};
@@ -75,16 +104,36 @@ async function generateHierarchicalClusters(items, options = {}) {
       // Calculate similarity matrix for first layer clusters
       const clusterSimilarityMatrix = calculateSimilarityMatrix(clusterEmbeddings);
       
-      // Second layer clustering
-      logger.debug(`Calculating optimal threshold for ${firstLayerClusters.length} clusters at layer 2`);
-      const secondLayerResult = await adaptiveClustering.findOptimalThreshold(
-        clusterSimilarityMatrix,
-        firstLayerClusters,
-        (matrix, clusters, threshold) => clusterItems(matrix, clusters, threshold),
-        { targetLayer: 2, verbose }
-      );
+      // Second layer clustering - handle existing clusters if preserving
+      let secondLayerClusters;
       
-      const secondLayerClusters = secondLayerResult.clusters;
+      if (preserveExisting && Object.keys(existingClusters.layer2).length > 0) {
+        // Use existing second-layer clusters
+        if (verbose) {
+          logger.debug(`Preserving ${Object.keys(existingClusters.layer2).length} existing second-layer clusters`);
+        }
+        
+        // Preserve and extend second layer clusters
+        const secondLayerResult = await preserveAndExtendLayerTwoClusters(
+          firstLayerClusters,
+          clusterEmbeddings,
+          existingClusters.layer2,
+          options.layer2Threshold
+        );
+        
+        secondLayerClusters = secondLayerResult.clusters;
+      } else {
+        // Generate new second layer clusters
+        logger.debug(`Calculating optimal threshold for ${firstLayerClusters.length} clusters at layer 2`);
+        const secondLayerResult = await adaptiveClustering.findOptimalThreshold(
+          clusterSimilarityMatrix,
+          firstLayerClusters,
+          (matrix, clusters, threshold) => clusterItems(matrix, clusters, threshold),
+          { targetLayer: 2, verbose }
+        );
+        
+        secondLayerClusters = secondLayerResult.clusters;
+      }
       
       // Map first layer cluster IDs to second layer cluster IDs
       secondLayerClusters.forEach((clusterGroup, index) => {
@@ -149,6 +198,270 @@ async function generateHierarchicalClusters(items, options = {}) {
     logger.error(`Error generating hierarchical clusters: ${error.message}`);
     throw error;
   }
+}
+
+/**
+ * Preserve existing clusters and extend them with new items
+ * @param {Array} items - New items to cluster
+ * @param {Array} embeddings - Embeddings for new items
+ * @param {Object} existingClusters - Mapping of existing cluster IDs to their info
+ * @param {number} threshold - Similarity threshold for new items
+ * @returns {Promise<Object>} Result mimicking adaptive clustering output
+ */
+async function preserveAndExtendClusters(items, embeddings, existingClusters, threshold) {
+  // Create placeholder clusters for existing cluster IDs
+  const existingClusterIds = Object.keys(existingClusters);
+  const placeholderClusters = existingClusterIds.map(id => []);
+  
+  // Create cluster embeddings using random sample items (we'll update these)
+  let clusterEmbeddings = placeholderClusters.map(() => null);
+  
+  // Function to find the most similar cluster for an item
+  const findBestCluster = async (item, itemEmbedding) => {
+    let bestCluster = 0;
+    let bestSimilarity = -1;
+    
+    // For each cluster, calculate similarity with the item
+    for (let i = 0; i < placeholderClusters.length; i++) {
+      // Skip clusters with no embedding yet
+      if (!clusterEmbeddings[i]) continue;
+      
+      // Calculate similarity
+      const similarity = cosineSimilarity(itemEmbedding, clusterEmbeddings[i]);
+      
+      // If this is the best match so far, record it
+      if (similarity > bestSimilarity) {
+        bestSimilarity = similarity;
+        bestCluster = i;
+      }
+    }
+    
+    // If best similarity is above threshold, assign to that cluster
+    // Otherwise create a new cluster
+    if (bestSimilarity >= (threshold || 0.5)) {
+      return bestCluster;
+    } else {
+      return -1; // Indicates we need a new cluster
+    }
+  };
+  
+  // First pass: For each existing cluster, try to find items in the input that match
+  // the scenarios we know should be in this cluster
+  for (let clusterIdx = 0; clusterIdx < existingClusterIds.length; clusterIdx++) {
+    const clusterId = existingClusterIds[clusterIdx];
+    const clusterInfo = existingClusters[clusterId];
+    
+    // Find items that match existing scenario IDs
+    for (const item of items) {
+      if (clusterInfo.scenarioIds && clusterInfo.scenarioIds.includes(item.id)) {
+        // If this item belongs to the current cluster, add it
+        placeholderClusters[clusterIdx].push(item);
+      }
+    }
+    
+    // If we found items for this cluster, calculate the cluster embedding
+    if (placeholderClusters[clusterIdx].length > 0) {
+      const clusterItemIndices = placeholderClusters[clusterIdx]
+        .map(item => items.findIndex(i => i.id === item.id))
+        .filter(idx => idx !== -1);
+      
+      clusterEmbeddings[clusterIdx] = averageEmbeddings(embeddings, clusterItemIndices);
+    }
+  }
+  
+  // Second pass: Assign new items (those without existing cluster assignments) to the best matching cluster
+  // or create new clusters if no good match
+  const unassignedItems = items.filter(item => 
+    !existingClusterIds.some(clusterId => 
+      existingClusters[clusterId].scenarioIds && 
+      existingClusters[clusterId].scenarioIds.includes(item.id)
+    )
+  );
+  
+  // New clusters we'll create
+  const newClusters = [];
+  
+  // Process each unassigned item
+  for (const item of unassignedItems) {
+    const itemIndex = items.findIndex(i => i.id === item.id);
+    if (itemIndex === -1) continue;
+    
+    const itemEmbedding = embeddings[itemIndex];
+    if (!itemEmbedding) continue;
+    
+    // Find the best cluster for this item
+    const bestCluster = await findBestCluster(item, itemEmbedding);
+    
+    if (bestCluster === -1) {
+      // Create a new cluster for this item
+      newClusters.push([item]);
+    } else {
+      // Assign to existing cluster
+      placeholderClusters[bestCluster].push(item);
+      
+      // Update the cluster embedding
+      const clusterItemIndices = placeholderClusters[bestCluster]
+        .map(clusterItem => items.findIndex(i => i.id === clusterItem.id))
+        .filter(idx => idx !== -1);
+      
+      clusterEmbeddings[bestCluster] = averageEmbeddings(embeddings, clusterItemIndices);
+    }
+  }
+  
+  // Combine existing (now filled) and new clusters, removing any empty clusters
+  const finalClusters = [...placeholderClusters.filter(cluster => cluster.length > 0), ...newClusters];
+  
+  // Return a result that mimics adaptive clustering output
+  return {
+    threshold: threshold || 0.5,
+    clusters: finalClusters
+  };
+}
+
+/**
+ * Preserve existing second-layer clusters and extend them with new first-layer clusters
+ * @param {Array} firstLayerClusters - All first layer clusters
+ * @param {Array} clusterEmbeddings - Embeddings for first layer clusters
+ * @param {Object} existingLayer2Clusters - Existing second layer cluster mappings
+ * @param {number} threshold - Similarity threshold
+ * @returns {Promise<Object>} Result mimicking adaptive clustering output
+ */
+async function preserveAndExtendLayerTwoClusters(firstLayerClusters, clusterEmbeddings, existingLayer2Clusters, threshold) {
+  // Create mapping of first layer clusters to their indexes
+  const firstLayerClusterIndices = {};
+  firstLayerClusters.forEach((cluster, index) => {
+    // Use a cluster key that can be matched against existing relationships
+    const scenarioIds = cluster.map(item => item.id).sort().join(',');
+    firstLayerClusterIndices[scenarioIds] = index;
+  });
+  
+  // Create placeholder clusters for existing layer 2 cluster IDs
+  const existingClusterIds = Object.keys(existingLayer2Clusters);
+  const secondLayerClusters = existingClusterIds.map(() => []);
+  
+  // For each existing layer 2 cluster, try to find matching first layer clusters
+  for (let clusterIdx = 0; clusterIdx < existingClusterIds.length; clusterIdx++) {
+    const clusterId = existingClusterIds[clusterIdx];
+    const clusterInfo = existingLayer2Clusters[clusterId];
+    
+    // For each child cluster ID in this second layer cluster
+    if (clusterInfo.childClusterIds) {
+      for (let i = 0; i < firstLayerClusters.length; i++) {
+        const firstLayerCluster = firstLayerClusters[i];
+        // See if this first layer cluster matches any of the child clusters
+        const scenarioIds = firstLayerCluster.map(item => item.id).sort().join(',');
+        
+        // If this first layer cluster belongs to an existing second layer cluster, add it
+        if (clusterInfo.childClusterIds.some(childId => {
+          // Get all scenario IDs belonging to this child cluster ID
+          const childScenarios = existingLayer2Clusters[clusterId]?.childClusterScenarioIds?.[childId];
+          return childScenarios && scenaroIdsOverlap(
+            childScenarios,
+            firstLayerCluster.map(item => item.id)
+          );
+        })) {
+          secondLayerClusters[clusterIdx].push(firstLayerCluster);
+        }
+      }
+    }
+  }
+  
+  // For first layer clusters not assigned to any second layer cluster,
+  // assign them to the most similar second layer cluster or create new ones
+  const unassignedIndices = [];
+  for (let i = 0; i < firstLayerClusters.length; i++) {
+    const isAssigned = secondLayerClusters.some(cluster => 
+      cluster.some(c => c === firstLayerClusters[i])
+    );
+    
+    if (!isAssigned) {
+      unassignedIndices.push(i);
+    }
+  }
+  
+  // Calculate embeddings for existing second layer clusters
+  const secondLayerEmbeddings = secondLayerClusters.map(cluster => {
+    if (cluster.length === 0) return null;
+    
+    const indices = [];
+    cluster.forEach(firstLayerCluster => {
+      const index = firstLayerClusters.indexOf(firstLayerCluster);
+      if (index !== -1) indices.push(index);
+    });
+    
+    return averageEmbeddings(clusterEmbeddings, indices);
+  });
+  
+  // New second layer clusters we'll create
+  const newSecondLayerClusters = [];
+  
+  // Assign unassigned first layer clusters
+  for (const unassignedIdx of unassignedIndices) {
+    // Find the most similar second layer cluster
+    let bestClusterIdx = -1;
+    let bestSimilarity = 0;
+    
+    for (let i = 0; i < secondLayerClusters.length; i++) {
+      // Skip if no embedding (empty cluster)
+      if (!secondLayerEmbeddings[i]) continue;
+      
+      const similarity = cosineSimilarity(clusterEmbeddings[unassignedIdx], secondLayerEmbeddings[i]);
+      
+      if (similarity > threshold && similarity > bestSimilarity) {
+        bestSimilarity = similarity;
+        bestClusterIdx = i;
+      }
+    }
+    
+    if (bestClusterIdx !== -1) {
+      // Assign to existing second layer cluster
+      secondLayerClusters[bestClusterIdx].push(firstLayerClusters[unassignedIdx]);
+      
+      // Update embedding
+      const indices = [];
+      secondLayerClusters[bestClusterIdx].forEach(firstLayerCluster => {
+        const index = firstLayerClusters.indexOf(firstLayerCluster);
+        if (index !== -1) indices.push(index);
+      });
+      
+      secondLayerEmbeddings[bestClusterIdx] = averageEmbeddings(clusterEmbeddings, indices);
+    } else {
+      // Create new second layer cluster
+      newSecondLayerClusters.push([firstLayerClusters[unassignedIdx]]);
+    }
+  }
+  
+  // Combine existing (now filled) and new second layer clusters
+  const finalClusters = [
+    ...secondLayerClusters.filter(cluster => cluster.length > 0),
+    ...newSecondLayerClusters
+  ];
+  
+  // Return a result that mimics adaptive clustering output
+  return {
+    threshold: threshold || 0.5,
+    clusters: finalClusters
+  };
+}
+
+/**
+ * Check if two sets of scenario IDs have significant overlap
+ * @param {Array} setA - First set of scenario IDs
+ * @param {Array} setB - Second set of scenario IDs
+ * @returns {boolean} True if significant overlap exists
+ */
+function scenaroIdsOverlap(setA, setB) {
+  // If either set is empty, no overlap
+  if (!setA || !setB || setA.length === 0 || setB.length === 0) {
+    return false;
+  }
+  
+  // Count overlap
+  const overlap = setA.filter(id => setB.includes(id)).length;
+  
+  // Check if overlap is significant (at least 50% of the smaller set)
+  const smallerSetSize = Math.min(setA.length, setB.length);
+  return overlap >= smallerSetSize * 0.5;
 }
 
 /**
@@ -229,16 +542,17 @@ function clusterItems(similarityMatrix, items, threshold) {
  * @returns {Array<Array<number>>} Similarity matrix
  */
 function calculateSimilarityMatrix(embeddings) {
-  const count = embeddings.length;
-  const matrix = Array(count).fill().map(() => Array(count).fill(0));
+  const n = embeddings.length;
+  const matrix = Array(n).fill().map(() => Array(n).fill(0));
   
-  for (let i = 0; i < count; i++) {
-    matrix[i][i] = 1; // Self-similarity is always 1
+  // Calculate similarity for each pair of embeddings
+  for (let i = 0; i < n; i++) {
+    matrix[i][i] = 1; // Self-similarity is 1
     
-    for (let j = i + 1; j < count; j++) {
+    for (let j = i + 1; j < n; j++) {
       const similarity = cosineSimilarity(embeddings[i], embeddings[j]);
       matrix[i][j] = similarity;
-      matrix[j][i] = similarity; // Matrix is symmetric
+      matrix[j][i] = similarity; // Similarity matrix is symmetric
     }
   }
   
@@ -252,21 +566,24 @@ function calculateSimilarityMatrix(embeddings) {
  * @returns {number} Cosine similarity (0-1)
  */
 function cosineSimilarity(a, b) {
-  if (!a || !b || a.length !== b.length) return 0;
+  if (!a || !b) return 0;
   
   let dotProduct = 0;
-  let normA = 0;
-  let normB = 0;
+  let magA = 0;
+  let magB = 0;
   
   for (let i = 0; i < a.length; i++) {
     dotProduct += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
+    magA += a[i] * a[i];
+    magB += b[i] * b[i];
   }
   
-  if (normA === 0 || normB === 0) return 0;
+  magA = Math.sqrt(magA);
+  magB = Math.sqrt(magB);
   
-  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+  if (magA === 0 || magB === 0) return 0;
+  
+  return dotProduct / (magA * magB);
 }
 
 /**

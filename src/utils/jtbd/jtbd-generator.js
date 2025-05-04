@@ -23,16 +23,55 @@ async function generateJTBDs(scenarios, options = {}) {
     const layerCount = options.layers || 1;
     const verbose = options.verbose || false;
     const incremental = options.incremental || false;
+    const preserveExistingClusters = options.preserveExistingClusters || false;
     
-    logger.info(`Generating ${layerCount} layer(s) of JTBDs`);
+    logger.info(`Generating ${layerCount} layer(s) of JTBDs${incremental ? ' in incremental mode' : ''}`);
+    
+    // For incremental mode, we need to load previous JTBDs
+    let previousJTBDs = [];
+    let previousScenarioIds = new Set();
+    
+    if (incremental && options.previousResults) {
+      if (verbose) {
+        logger.debug('Loading previous results for incremental processing');
+      }
+      
+      // Extract previous JTBDs
+      previousJTBDs = options.previousResults.jtbds || [];
+      
+      // Track scenario IDs that have been already processed
+      previousScenarioIds = new Set(
+        previousJTBDs
+          .flatMap(jtbd => jtbd.scenarioIds || [])
+      );
+      
+      if (verbose) {
+        logger.debug(`Found ${previousJTBDs.length} previous JTBDs covering ${previousScenarioIds.size} scenarios`);
+      }
+    }
+    
+    // Filter out scenarios that have already been processed in incremental mode with preserved clusters
+    let scenariosToProcess = scenarios;
+    if (incremental && preserveExistingClusters) {
+      scenariosToProcess = scenarios.filter(scenario => !previousScenarioIds.has(scenario.id));
+      
+      if (verbose) {
+        logger.debug(`Processing ${scenariosToProcess.length} new scenarios (${scenarios.length - scenariosToProcess.length} already processed)`);
+      }
+    }
     
     // Step 1: Generate hierarchical clusters from scenarios
-    const clusterResult = await clusteringService.generateHierarchicalClusters(scenarios, {
-      layerCount,
-      verbose,
-      layer1Threshold: options.layer1Threshold,
-      layer2Threshold: options.layer2Threshold
-    });
+    const clusterResult = await clusteringService.generateHierarchicalClusters(
+      incremental && preserveExistingClusters ? scenariosToProcess : scenarios, 
+      {
+        layerCount,
+        verbose,
+        layer1Threshold: options.layer1Threshold,
+        layer2Threshold: options.layer2Threshold,
+        // If incremental and preserving clusters, pass existing cluster information
+        existingClusters: incremental && preserveExistingClusters ? extractClusterInfo(previousJTBDs) : null
+      }
+    );
     
     // Step 2: Get the LLM provider for JTBD generation
     const llmProvider = getLLMProvider();
@@ -68,10 +107,23 @@ async function generateJTBDs(scenarios, options = {}) {
     
     // If only one layer requested, return the results
     if (layerCount === 1) {
-      return {
-        jtbds: firstLayerJTBDs,
-        hierarchyInfo: null
-      };
+      // In incremental mode, merge with previous JTBDs if not preserving clusters
+      if (incremental && !preserveExistingClusters) {
+        return {
+          jtbds: mergeJTBDs(previousJTBDs, firstLayerJTBDs),
+          hierarchyInfo: null
+        };
+      } else if (incremental && preserveExistingClusters) {
+        return {
+          jtbds: [...previousJTBDs, ...firstLayerJTBDs],
+          hierarchyInfo: null
+        };
+      } else {
+        return {
+          jtbds: firstLayerJTBDs,
+          hierarchyInfo: null
+        };
+      }
     }
     
     // Step 4: Generate second-layer JTBDs (abstracted from first-layer JTBDs)
@@ -130,20 +182,122 @@ async function generateJTBDs(scenarios, options = {}) {
     }
     
     // Combine all JTBDs
-    const allJTBDs = [...firstLayerJTBDs, ...secondLayerJTBDs];
+    let allJTBDs = [...firstLayerJTBDs, ...secondLayerJTBDs];
+    
+    // In incremental mode, merge with previous JTBDs if not preserving clusters,
+    // otherwise just add the new JTBDs to previous ones
+    if (incremental) {
+      if (preserveExistingClusters) {
+        // Keep previous JTBDs and add new ones
+        allJTBDs = [...previousJTBDs, ...allJTBDs];
+      } else {
+        // Merge previous and new JTBDs
+        allJTBDs = mergeJTBDs(previousJTBDs, allJTBDs);
+      }
+    }
     
     // Return the results with hierarchy information
     return {
       jtbds: allJTBDs,
       hierarchyInfo: {
         layer1Count: firstLayerJTBDs.length,
-        layer2Count: secondLayerJTBDs.length
+        layer2Count: secondLayerJTBDs.length,
+        previousJTBDsCount: incremental ? previousJTBDs.length : 0
       }
     };
   } catch (error) {
     logger.error(`Error generating JTBDs: ${error.message}`);
     throw error;
   }
+}
+
+/**
+ * Extract cluster information from existing JTBDs for incremental clustering
+ * @param {Array} jtbds - Previous JTBDs with cluster information
+ * @returns {Object|null} Cluster information or null if none available
+ */
+function extractClusterInfo(jtbds) {
+  if (!jtbds || jtbds.length === 0) {
+    return null;
+  }
+  
+  const clusterInfo = {
+    layer1: {},
+    layer2: {}
+  };
+  
+  // Extract cluster information for each layer
+  jtbds.forEach(jtbd => {
+    if (jtbd.level === 1 && jtbd.clusterId && jtbd.scenarioIds) {
+      clusterInfo.layer1[jtbd.clusterId] = {
+        scenarioIds: jtbd.scenarioIds,
+        jtbdId: jtbd.id
+      };
+    } else if (jtbd.level === 2 && jtbd.clusterId && jtbd.childIds) {
+      clusterInfo.layer2[jtbd.clusterId] = {
+        childClusterIds: jtbd.childIds.map(childId => {
+          const childJTBD = jtbds.find(j => j.id === childId);
+          return childJTBD ? childJTBD.clusterId : null;
+        }).filter(Boolean),
+        jtbdId: jtbd.id
+      };
+    }
+  });
+  
+  return clusterInfo;
+}
+
+/**
+ * Merge previous JTBDs with newly generated ones to avoid duplication
+ * @param {Array} previousJTBDs - JTBDs from previous runs
+ * @param {Array} newJTBDs - Newly generated JTBDs
+ * @returns {Array} Merged array of JTBDs
+ */
+function mergeJTBDs(previousJTBDs, newJTBDs) {
+  if (!previousJTBDs || previousJTBDs.length === 0) {
+    return newJTBDs;
+  }
+  
+  if (!newJTBDs || newJTBDs.length === 0) {
+    return previousJTBDs;
+  }
+  
+  // Use a map to track existing scenario IDs in previous JTBDs
+  const scenarioToJTBDs = {};
+  
+  // Map existing scenarios to their JTBDs
+  previousJTBDs.forEach(jtbd => {
+    if (jtbd.scenarioIds && jtbd.scenarioIds.length > 0) {
+      jtbd.scenarioIds.forEach(scenarioId => {
+        if (!scenarioToJTBDs[scenarioId]) {
+          scenarioToJTBDs[scenarioId] = [];
+        }
+        scenarioToJTBDs[scenarioId].push(jtbd.id);
+      });
+    }
+  });
+  
+  // Find JTBDs that need to be preserved (those not fully covered by new JTBDs)
+  const preserveJTBDs = previousJTBDs.filter(jtbd => {
+    // If no scenario IDs, keep it
+    if (!jtbd.scenarioIds || jtbd.scenarioIds.length === 0) {
+      return true;
+    }
+    
+    // Check if all scenarios in this JTBD are covered by new JTBDs
+    const allCovered = jtbd.scenarioIds.every(scenarioId => {
+      const newJTBDWithScenario = newJTBDs.some(newJtbd => 
+        newJtbd.scenarioIds && newJtbd.scenarioIds.includes(scenarioId)
+      );
+      return newJTBDWithScenario;
+    });
+    
+    // If not all scenarios are covered by new JTBDs, preserve this JTBD
+    return !allCovered;
+  });
+  
+  // Combine preserved JTBDs with new ones
+  return [...preserveJTBDs, ...newJTBDs];
 }
 
 /**

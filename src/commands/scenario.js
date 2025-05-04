@@ -24,10 +24,12 @@ async function extractScenarios(source, options) {
 
     // Set custom model if provided
     if (options.model) {
-      const configData = config.getConfig();
-      configData.llm.model = options.model;
-      config.updateConfig(configData);
-      logger.debug(`Using custom model: ${options.model}`);
+      // Just set the model directly in the environment variable
+      // This avoids using config.updateConfig which doesn't exist
+      if (options.model) {
+        process.env.LLM_MODEL = options.model;
+        logger.debug(`Using custom model: ${options.model}`);
+      }
     }
     
     // Use mock parser for testing if specified

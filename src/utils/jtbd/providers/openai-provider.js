@@ -383,14 +383,23 @@ function makeOpenAIAPIRequest(apiKey, systemMessage, userMessage, model, maxToke
       ]
     };
     
+    // Check if the model is a reasoning model
+    const reasoningModels = ['o4-mini', 'o3', 'o3-mini', 'o1', 'o1-mini', 'o1-pro'];
+    const isReasoningModel = reasoningModels.some(rm => model.includes(rm));
+    
     // Handle model-specific parameters
-    if (model.startsWith('o3') || model.startsWith('o4')) {
-      // o3 and o4 models use max_completion_tokens instead of max_tokens
+    if (model.startsWith('o3') || model.startsWith('o4') || model.startsWith('o1')) {
+      // o1, o3 and o4 models use max_completion_tokens instead of max_tokens
       requestData.max_completion_tokens = maxTokens;
       
-      // o4-mini is a reasoning model and doesn't support temperature parameter
-      // https://platform.openai.com/docs/guides/reasoning
-      logger.debug(`Using reasoning model ${model}, skipping temperature parameter`);
+      // Only add temperature for non-reasoning models
+      if (!isReasoningModel) {
+        requestData.temperature = temperature;
+      } else {
+        // Reasoning models don't support temperature parameter
+        // https://platform.openai.com/docs/guides/reasoning
+        logger.debug(`Using reasoning model ${model}, skipping temperature parameter`);
+      }
     } else {
       // Other models use max_tokens and support custom temperature
       requestData.max_tokens = maxTokens;

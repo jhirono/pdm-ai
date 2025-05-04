@@ -27,6 +27,8 @@ async function execute(input, options) {
     const verbose = options.verbose || false;
     const layer1Threshold = options.threshold1 || null;
     const layer2Threshold = options.threshold2 || null;
+    // Add option for preserving existing clusters (default to false, meaning recreate clusters)
+    const preserveExistingClusters = options.preserveClusters || false;
     
     // Apply options to config
     config.model = model;
@@ -46,14 +48,51 @@ async function execute(input, options) {
     
     logger.info(`Loaded ${scenariosData.scenarios.length} scenarios`);
     
+    // Load previous results for incremental processing if enabled
+    let previousResults = null;
+    
+    if (incremental) {
+      // Find most recent output file in the same directory as the target output
+      const previousFile = options.previousFile || await findMostRecentOutput(outputFile);
+      
+      if (previousFile && fs.existsSync(previousFile)) {
+        try {
+          logger.info(`Loading previous results from ${previousFile} for incremental processing`);
+          previousResults = await fs.readJson(previousFile);
+          
+          if (verbose && previousResults) {
+            const prevJtbdCount = previousResults.jtbds?.length || 0;
+            const prevScenarioCount = previousResults.scenarios?.length || 0;
+            logger.debug(`Loaded ${prevJtbdCount} previous JTBDs and ${prevScenarioCount} previous scenarios`);
+          }
+        } catch (error) {
+          logger.warn(`Failed to load previous results: ${error.message}`);
+          logger.warn('Proceeding with incremental processing without previous results');
+          previousResults = null;
+        }
+      } else {
+        logger.warn(`No previous results file found for incremental processing`);
+        logger.warn('Proceeding with incremental processing without previous results');
+      }
+    }
+    
     // Set generation options
     const generationOptions = {
       layers,
       verbose,
       incremental,
+      previousResults,
+      preserveExistingClusters,
       layer1Threshold,
       layer2Threshold
     };
+    
+    if (verbose) {
+      logger.debug(`Incremental processing: ${incremental}`);
+      if (incremental) {
+        logger.debug(`Preserve existing clusters: ${preserveExistingClusters}`);
+      }
+    }
     
     // Generate JTBDs using our new adaptive clustering implementation
     const result = await jtbdGenerator.generateJTBDs(
@@ -69,7 +108,10 @@ async function execute(input, options) {
       ...result.metadata || {},
       sourceFile: input,
       combinedOutput: true,
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
+      incremental: incremental,
+      preservedClusters: incremental ? preserveExistingClusters : false,
+      previousResultsFile: incremental && previousResults ? options.previousFile : null
     };
     
     // Ensure output directory exists
@@ -91,6 +133,11 @@ async function execute(input, options) {
         logger.debug(`- Layer 1 JTBDs: ${result.hierarchyInfo.layer1Count}`);
         logger.debug(`- Layer 2 JTBDs: ${result.hierarchyInfo.layer2Count}`);
       }
+      
+      if (incremental && result.hierarchyInfo) {
+        logger.debug(`- Previous JTBDs: ${result.hierarchyInfo.previousJTBDsCount}`);
+        logger.debug(`- Mode: ${preserveExistingClusters ? 'Preserving existing clusters' : 'Creating new clusters'}`);
+      }
     }
     
     logger.info(`JTBD generation complete. Results saved to ${outputFile}`);
@@ -99,6 +146,46 @@ async function execute(input, options) {
   } catch (error) {
     logger.error(`Error generating JTBDs: ${error.message}`);
     throw error;
+  }
+}
+
+/**
+ * Find the most recent output file in the same directory as the target output
+ * @param {string} outputFile - Target output file path
+ * @returns {Promise<string|null>} Path to most recent output file or null if none found
+ */
+async function findMostRecentOutput(outputFile) {
+  try {
+    const outputDir = path.dirname(outputFile);
+    const baseFilename = path.basename(outputFile).split('_')[0];
+    
+    // Check if directory exists
+    if (!fs.existsSync(outputDir)) {
+      return null;
+    }
+    
+    // Get all files in the directory
+    const files = await fs.readdir(outputDir);
+    
+    // Filter files matching the pattern and not the current output
+    const matchingFiles = files
+      .filter(file => file.startsWith(baseFilename) && file.includes('_jtbds_') && file !== path.basename(outputFile))
+      .map(file => ({
+        file,
+        path: path.join(outputDir, file),
+        mtime: fs.statSync(path.join(outputDir, file)).mtime
+      }))
+      .sort((a, b) => b.mtime - a.mtime);
+    
+    if (matchingFiles.length === 0) {
+      return null;
+    }
+    
+    // Return the most recent file
+    return matchingFiles[0].path;
+  } catch (error) {
+    logger.warn(`Error finding previous output file: ${error.message}`);
+    return null;
   }
 }
 

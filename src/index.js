@@ -69,6 +69,7 @@ program
   .option('-v, --verbose', 'Enable verbose output')
   .option('--threshold1 <number>', 'Force layer 1 clustering threshold (0.0-1.0)', parseFloat)
   .option('--threshold2 <number>', 'Force layer 2 clustering threshold (0.0-1.0)', parseFloat)
+  .option('--preserve-clusters', 'In incremental mode, preserve existing clusters instead of creating new ones')
   .action((input, options) => {
     jtbd.execute(input, options).catch(err => {
       logger.error(err.message);

@@ -1,0 +1,5 @@
+LLM_API_KEY=your_openai_api_key
+LLM_MODEL=gpt-4o #OpenAI models only. I don't recommend using reasoning models like o4-mini because of its randomness.
+LLM_MAX_TOKENS=4000
+LLM_TEMPERATURE=0.7
+LANGUAGE=en
