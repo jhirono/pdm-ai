@@ -1,0 +1,45 @@
+{
+  "name": "pdm-ai",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "mocha test/**/*.test.js",
+    "start": "node src/index.js"
+  },
+  "bin": {
+    "pdm": "./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhirono/pdm-ai.git"
+  },
+  "keywords": [
+    "pdm",
+    "jtbd",
+    "product",
+    "management",
+    "ai",
+    "user",
+    "stories"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jhirono/pdm-ai/issues"
+  },
+  "homepage": "https://github.com/jhirono/pdm-ai#readme",
+  "description": "PDM-AI - Transform customer feedback into structured product insights using the Jobs-to-be-Done (JTBD) methodology",
+  "dependencies": {
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1",
+    "fs-extra": "^11.2.0",
+    "openai": "^3.3.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^10.8.2"
+  }
+}
