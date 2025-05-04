@@ -1,3 +1,0 @@
-Accessibility Feedback - Keyboard Navigation
-
-"As a user who relies on keyboard navigation, I want all website features, including file actions (rename, move, share) and menus, to be fully accessible using Tab and Enter keys, so I can use Dropbox effectively without a mouse." 

@@ -1,3 +1,0 @@
-Subject: Mobile Offline Access Improvement
-
-Making files available offline on the mobile app is great, but managing them is tricky. As a frequent traveler who relies on offline files, I want a dedicated section in the app to easily view and manage *only* my offline files, so that I can quickly find what I need without internet access. 

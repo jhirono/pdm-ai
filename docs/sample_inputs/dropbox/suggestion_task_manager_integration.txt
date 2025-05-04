@@ -1,5 +1,0 @@
-Email Suggestion: Integration with Task Managers
-
-It would be amazing if Dropbox files could be linked directly within Asana/Trello tasks. 
-
-"As a project manager coordinating tasks, I want to attach specific Dropbox files or folders directly to tasks in my project management tool, so that team members have immediate access to the relevant documents for their work." 

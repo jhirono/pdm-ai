@@ -1,3 +1,0 @@
-Feedback Snippet - Granular Sharing Permissions
-
-"Sharing a folder gives either view or edit access. As someone collaborating on sensitive documents, I want more granular permissions, like 'comment-only' access or preventing downloads for view-only users, so that I have finer control over how my shared files are used." 

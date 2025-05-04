@@ -1,5 +1,0 @@
-Support Ticket Summary - Large File Sharing
-
-Issue: User unable to easily share a 10GB video file with a collaborator.
-
-Expressed Need: "When I need to share very large files (over 5GB) that exceed email limits, I want a simple, reliable way to send a download link through Dropbox, so my collaborators can access the files without needing special software or accounts." 

@@ -1,6 +1,0 @@
-Customer Service Log - Two-Factor Authentication
-
-User: Mark T.
-Issue: Found setting up 2FA slightly confusing, wanted more recovery options.
-
-Need: "When setting up security features like 2FA, I want extremely clear instructions and multiple backup options (like recovery codes AND a backup phone number), so I feel confident I won't get locked out of my account." 
