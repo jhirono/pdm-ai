@@ -1,0 +1,33 @@
+# Test files
+test/
+*.test.js
+run-integration-tests.sh
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Development files
+.git/
+.gitignore
+.env
+.env.example
+.DS_Store
+
+# Input test data
+test/inputs/
+
+# Editor specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories that should be installed by the user
+node_modules/

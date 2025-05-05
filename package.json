@@ -25,8 +25,8 @@
     "user",
     "stories"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "jhirono",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jhirono/pdm-ai/issues"
   },
