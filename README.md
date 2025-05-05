@@ -9,11 +9,13 @@ PDM-AI is a command-line tool for transforming customer feedback into structured
 npm install -g pdm-ai
 
 # Or clone and install locally
-git clone https://github.com/yourusername/pdm-ai.git
+git clone https://github.com/jhirono/pdm-ai.git
 cd pdm-ai
 npm install
 npm link
 ```
+
+Rename .env.example to .env and update your LLM_KEY with your openai api key.
 
 ## Quick Start
 

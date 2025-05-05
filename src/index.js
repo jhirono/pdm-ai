@@ -82,7 +82,7 @@ program
   .command('visualize')
   .description('Create visual representations of JTBDs and scenarios')
   .argument('<input>', 'Input JSON file with JTBDs and scenarios')
-  .option('-f, --format <format>', 'Output format (mermaid, figma, miro)', 'mermaid')
+  .option('-f, --format <format>', 'Output format (mermaid, csv)', 'mermaid')
   .option('-p, --perspective <perspective>', 'Visualization perspective (jtbd, persona)', 'jtbd')
   .option('-o, --output <path>', 'Output file path')
   .option('-q, --filter <query>', 'Filter entities by text match')
