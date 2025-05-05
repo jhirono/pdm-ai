@@ -123,7 +123,6 @@ async function extractScenarios(source, options) {
  * @returns {string} - Output filename
  */
 function generateOutputFilename(source) {
-  const timestamp = new Date().toISOString().replace(/:/g, '-');
   let baseName;
   
   if (Array.isArray(source)) {
@@ -134,7 +133,7 @@ function generateOutputFilename(source) {
     baseName = path.basename(source, path.extname(source));
   }
   
-  return path.resolve(`./outputs/scenarios/${baseName}_scenarios_${timestamp}.json`);
+  return path.resolve(`./.pdm/outputs/scenarios/${baseName}-scenarios.json`);
 }
 
 /**

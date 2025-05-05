@@ -36,14 +36,12 @@ pdm visualize outputs/jtbds.json -o outputs/jtbd-diagram.md
 When you initialize a project, PDM-AI creates the following structure:
 
 ```
-my-product/
-├── inputs/          # Place your raw text files here
-│   └── raw/         # For original, unprocessed feedback
-├── outputs/         # Generated artifacts
-│   ├── scenarios/   # Extracted user scenarios
-│   ├── jtbds/       # Generated JTBDs
-│   └── visualizations/ # Visual representations
-└── .pdm/           # Project configuration and version tracking
+.pdm/           # Project configuration and version tracking
+ ├── inputs/     # Project-specific input files
+ ├── outputs/    # Project-specific output files
+ ├── versions/   # Version tracking information
+ ├── temp/       # Temporary files
+ └── config.json # Project configuration
 ```
 
 ## Command Reference
@@ -88,9 +86,10 @@ Options:
 - `-l, --layers <number>` - Number of abstraction layers (1 or 2)
 - `-i, --incremental` - Enable incremental mode to update existing JTBDs
 - `-v, --verbose` - Enable verbose output
-- `--threshold1 <number>` - Force layer 1 clustering threshold (0.0-1.0)
-- `--threshold2 <number>` - Force layer 2 clustering threshold (0.0-1.0)
-- `--preserve-clusters` - In incremental mode, preserve existing clusters
+- `-t1, --threshold1 <number>` - Force layer 1 clustering threshold (0.0-1.0)
+- `-t2, --threshold2 <number>` - Force layer 2 clustering threshold (0.0-1.0)
+- `-c, --preserve-clusters` - In incremental mode, preserve existing clusters
+- `-p, --previous-file <path>` - Explicitly specify previous JTBD file for incremental mode
 
 ### Create Visualizations
 
@@ -103,11 +102,11 @@ Arguments:
 
 Options:
 - `-f, --format <format>` - Output format: mermaid, figma, miro (default: mermaid)
-- `-v, --view <view>` - Visualization perspective: jtbd, persona (default: jtbd)
+- `-p, --perspective <perspective>` - Visualization perspective: jtbd, persona (default: jtbd)
 - `-o, --output <path>` - Output file path
-- `--filter <query>` - Filter entities by text match
+- `-q, --filter <query>` - Filter entities by text match
 - `-m, --max-nodes <number>` - Maximum number of nodes to display (default: 100)
-- `--verbose` - Show detailed processing output
+- `-v, --verbose` - Show detailed processing output
 
 ## Advanced Features
 
@@ -121,6 +120,8 @@ pdm jtbd new_scenarios.json --incremental
 
 # Preserve existing clusters and add new data to them or create new clusters
 pdm jtbd new_scenarios.json --incremental --preserve-clusters
+# Or use the shorthand
+pdm jtbd new_scenarios.json -i -c
 ```
 
 ### Hierarchical Clustering
@@ -141,10 +142,10 @@ PDM-AI supports different visualization perspectives:
 
 ```bash
 # JTBD-centric view (default)
-pdm visualize jtbds.json --view jtbd
+pdm visualize jtbds.json --perspective jtbd
 
 # Persona-centric view
-pdm visualize jtbds.json --view persona
+pdm visualize jtbds.json --perspective persona
 ```
 
 ### Language Support
@@ -159,6 +160,30 @@ echo "PDM_LANGUAGE=ja" >> .env
 pdm config set language ja
 ```
 
+### Multi-language Integration
+
+PDM-AI can handle content in multiple languages simultaneously:
+
+```bash
+# Combine English and Japanese scenarios
+pdm scenario ./english_content/ ./japanese_content.txt -o combined_scenarios.json --recursive
+
+# Generate JTBDs from combined scenarios
+pdm jtbd combined_scenarios.json -o combined_jtbds.json --layers 2
+```
+
+### Automatic Threshold Tuning
+
+The clustering engine automatically adjusts similarity thresholds based on your data:
+
+```bash
+# Let PDM-AI tune thresholds automatically based on data
+pdm jtbd scenarios.json -o jtbds.json --layers 2
+
+# Override with manual thresholds if needed
+pdm jtbd scenarios.json -o jtbds.json --layers 2 --threshold1 0.75 --threshold2 0.85
+```
+
 ## Configuration
 
 PDM-AI uses a configuration system that can be set at global and project levels:
@@ -169,6 +194,16 @@ pdm config set model gpt-4o
 
 # List current configuration
 pdm config list
+```
+
+Configuration options can also be set in a `.env` file:
+
+```
+LLM_API_KEY=xxxx                # API key for LLM provider
+LLM_MODEL=gpt-4o                # Model to use for text generation
+MAX_TOKENS=4000                 # Maximum tokens for LLM responses
+TEMPERATURE=0.7                 # Randomness parameter (0.0-1.0)
+LANGUAGE=en                     # Language (en or ja)
 ```
 
 ## LLM Provider Support
@@ -182,6 +217,15 @@ Configure the API key in your .env file:
 ```
 LLM_API_KEY=your_openai_api_key
 ```
+
+## Version Tracking
+
+PDM-AI maintains comprehensive version tracking of all artifacts:
+
+- Command history with parameters
+- Timestamps and environment information
+- Detailed change logs (added, modified, deleted entities)
+- Parent-child relationships between versions
 
 ## License
 

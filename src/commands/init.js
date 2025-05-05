@@ -34,7 +34,7 @@ function init(projectName, projectDir) {
     if (success) {
       logger.info('');
       logger.info('Next steps:');
-      logger.info('1. Place your raw text files in the inputs/ directory');
+      logger.info('1. Place your raw text files in the .pdm/inputs/ directory');
       logger.info('2. Run `pdm scenario <input-file>` to extract user scenarios');
       logger.info('3. Run `pdm jtbd <scenarios-file>` to generate JTBDs');
       logger.info('4. Run `pdm visualize <jtbd-file>` to create visualizations');

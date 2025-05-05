@@ -31,7 +31,19 @@ class Logger {
       return this.currentLevel;
     }
     
-    const configLevel = config.getConfig().logLevel;
+    // If environment variable is set, use it
+    if (process.env.PDM_LOG_LEVEL && this.levels[process.env.PDM_LOG_LEVEL] !== undefined) {
+      return this.levels[process.env.PDM_LOG_LEVEL];
+    }
+    
+    // Check for verbose flag in command-line arguments
+    const isVerbose = process.argv.includes('--verbose');
+    if (isVerbose) {
+      return this.levels.debug;
+    }
+    
+    // Default to info level - debug messages will not be shown by default
+    const configLevel = config.getConfig().logLevel || 'info';
     return this.levels[configLevel] !== undefined ? this.levels[configLevel] : this.levels.info;
   }
 
@@ -42,7 +54,10 @@ class Logger {
   setLevel(level) {
     if (this.levels[level] !== undefined) {
       this.currentLevel = this.levels[level];
-      this.debug(`Log level set to ${level}`);
+      // Avoid potential circular debug call when setting level to debug
+      if (level !== 'debug') {
+        this.debug(`Log level set to ${level}`);
+      }
     } else {
       this.warn(`Invalid log level: ${level}. Using default.`);
       this.currentLevel = this.levels.info;

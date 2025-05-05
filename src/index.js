@@ -52,7 +52,6 @@ program
   .option('-r, --recursive', 'Process directories recursively')
   .option('-m, --model <model>', 'LLM model to use')
   .option('-v, --verbose', 'Enable verbose output')
-  .option('--mock', 'Use mock scenario parser for testing (no API call)')
   .action((source, options) => {
     scenario.execute(source, options);
   });
@@ -67,9 +66,10 @@ program
   .option('-l, --layers <number>', 'Number of abstraction layers (1 or 2)', parseInt)
   .option('-i, --incremental', 'Enable incremental mode to update existing JTBDs')
   .option('-v, --verbose', 'Enable verbose output')
-  .option('--threshold1 <number>', 'Force layer 1 clustering threshold (0.0-1.0)', parseFloat)
-  .option('--threshold2 <number>', 'Force layer 2 clustering threshold (0.0-1.0)', parseFloat)
-  .option('--preserve-clusters', 'In incremental mode, preserve existing clusters instead of creating new ones')
+  .option('-t1, --threshold1 <number>', 'Force layer 1 clustering threshold (0.0-1.0)', parseFloat)
+  .option('-t2, --threshold2 <number>', 'Force layer 2 clustering threshold (0.0-1.0)', parseFloat)
+  .option('-c, --preserve-clusters', 'In incremental mode, preserve existing clusters instead of creating new ones')
+  .option('-p, --previous-file <path>', 'Explicitly specify previous JTBD file for incremental mode')
   .action((input, options) => {
     jtbd.execute(input, options).catch(err => {
       logger.error(err.message);
@@ -83,11 +83,11 @@ program
   .description('Create visual representations of JTBDs and scenarios')
   .argument('<input>', 'Input JSON file with JTBDs and scenarios')
   .option('-f, --format <format>', 'Output format (mermaid, figma, miro)', 'mermaid')
-  .option('-v, --view <view>', 'Visualization perspective (jtbd, persona)', 'jtbd')
+  .option('-p, --perspective <perspective>', 'Visualization perspective (jtbd, persona)', 'jtbd')
   .option('-o, --output <path>', 'Output file path')
-  .option('--filter <query>', 'Filter entities by text match')
+  .option('-q, --filter <query>', 'Filter entities by text match')
   .option('-m, --max-nodes <number>', 'Maximum number of nodes to display', '100')
-  .option('--verbose', 'Show detailed processing output', false)
+  .option('-v, --verbose', 'Show detailed processing output', false)
   .action((input, options) => {
     visualize.execute(input, options).catch(err => {
       logger.error(err.message);

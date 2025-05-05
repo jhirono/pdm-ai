@@ -1,6 +1,5 @@
 node_modules/
 .env
 .env copy
-output/
-docs/sample_inputs/lazuli.txt
-test/
+.pdm/
+test/inputs/japanese.txt

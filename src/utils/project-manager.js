@@ -71,15 +71,15 @@ class ProjectManager {
     
     const directories = [
       // Main directories
-      path.join(projectDir, 'inputs'),
-      path.join(projectDir, 'outputs'),
       path.join(projectDir, '.pdm'),
       
       // Subdirectories for organization
-      path.join(projectDir, 'inputs', 'raw'),
-      path.join(projectDir, 'outputs', 'scenarios'),
-      path.join(projectDir, 'outputs', 'jtbds'),
-      path.join(projectDir, 'outputs', 'visualizations'),
+      path.join(projectDir, '.pdm', 'inputs'),
+      path.join(projectDir, '.pdm', 'inputs', 'raw'),
+      path.join(projectDir, '.pdm', 'outputs'),
+      path.join(projectDir, '.pdm', 'outputs', 'scenarios'),
+      path.join(projectDir, '.pdm', 'outputs', 'jtbds'),
+      path.join(projectDir, '.pdm', 'outputs', 'visualizations'),
       path.join(projectDir, '.pdm', 'versions'),
       path.join(projectDir, '.pdm', 'temp')
     ];
@@ -90,7 +90,7 @@ class ProjectManager {
         fs.mkdirSync(dir, { recursive: true });
       }
     });
-
+    
     // Create initial README files with usage instructions
     this.createReadmeFiles(projectDir);
   }
@@ -108,8 +108,8 @@ class ProjectManager {
 PDM-AI Project initialized on ${new Date().toLocaleDateString()}
 
 ## Structure
-- \`inputs/\`: Place your raw text files here for processing
-- \`outputs/\`: Generated scenarios, JTBDs, and visualizations
+- \`.pdm/inputs/\`: Place your raw text files here for processing
+- \`.pdm/outputs/\`: Generated scenarios, JTBDs, and visualizations
 - \`.pdm/\`: Project configuration and version tracking
 
 ## Usage
@@ -119,7 +119,7 @@ PDM-AI Project initialized on ${new Date().toLocaleDateString()}
 `
       },
       {
-        path: path.join(projectDir, 'inputs', 'README.md'),
+        path: path.join(projectDir, '.pdm', 'inputs', 'README.md'),
         content: `# Input Files
 
 Place your raw text files in this directory for processing. These can be:
