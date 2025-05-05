@@ -95,6 +95,36 @@ program
     });
   });
 
+// MCP Server command
+program
+  .command('mcp')
+  .description('Start the Model Context Protocol server for LLM chat integration')
+  .option('-p, --port <number>', 'Port number for HTTP transport (defaults to stdio if not specified)')
+  .option('-t, --transport <type>', 'Transport type (stdio or http)', 'stdio')
+  .option('-v, --verbose', 'Enable verbose logging')
+  .action((options) => {
+    // Set verbosity level before loading the MCP server
+    if (options.verbose) {
+      process.env.LOG_LEVEL = 'debug';
+    }
+    
+    // Use dynamic import to load the MCP server only when needed
+    try {
+      const mcpPath = path.join(__dirname, 'mcp', 'index.js');
+      // For HTTP transport, we'll need to implement that option in the future
+      if (options.transport === 'http') {
+        logger.info(`HTTP transport not yet implemented. Using stdio transport.`);
+      }
+      
+      // Execute the MCP server script
+      require(mcpPath);
+      
+    } catch (error) {
+      logger.error(`Failed to start MCP server: ${error.message}`);
+      process.exit(1);
+    }
+  });
+
 // Parse command line arguments
 program.parse(process.argv);
 
