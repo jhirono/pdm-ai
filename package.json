@@ -1,10 +1,15 @@
 {
   "name": "pdm-ai",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "src/index.js",
   "directories": {
     "doc": "docs"
   },
+  "files": [
+    "src/**/*",
+    "README.md",
+    "README_MCP.md"
+  ],
   "scripts": {
     "test": "mocha test/**/*.test.js",
     "start": "node src/index.js",

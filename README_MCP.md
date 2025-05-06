@@ -6,52 +6,36 @@ This guide explains how to use the PDM-AI Model Context Protocol (MCP) server in
 
 The Model Context Protocol (MCP) is a standard protocol that allows AI assistants to access external tools and data. With PDM-AI's MCP server, you can interact with your product requirements data directly from chat interfaces like Claude.
 
-## Local Setup
+## Configure your LLM Chat Interface
 
-### 1. Install PDM-AI
-
-If you haven't already, install PDM-AI:
-
-```bash
-npm install -g pdm-ai
-```
-
-### 2. Start the MCP Server
-
-You can start the MCP server using the PDM CLI:
-
-```bash
-pdm mcp
-```
-
-Or using npm:
-
-```bash
-npm run mcp
-```
-
-This will start the MCP server in stdio mode, which is ready to be used with MCP-compatible chat interfaces.
-
-### 3. Configure your LLM Chat Interface
-
-Create a configuration file for your MCP-compatible chat interface. Here's an example for Claude Desktop:
+Create a configuration file for your MCP-compatible chat interface. Here's an example for Claude, Cursor, VSCode, other IDEs.
 
 ```json
 {
   "mcpServers": {
     "pdm-ai": {
-      "command": "pdm",
-      "args": ["mcp"],
+      "command": "npx",
+      "args": ["-y", "--package=pdm-ai", "pdm-mcp"],
       "env": {
-        "PDM_CONFIG_PATH": "${HOME}/.pdm/config.json",
-        "LLM_API_KEY": "${OPENAI_API_KEY}"
+        "LLM_API_KEY": "your api key",
+        "LLM_MODEL": "gpt-4o",
+        "LLM_MAX_TOKENS": "4000",
+        "LLM_TEMPERATURE": "0.7",
+        "LANGUAGE": "en"
       }
     }
   }
 }
 ```
 
-Save this as `pdm-mcp-config.json` and configure your LLM interface to use this file.
+## Alternative: Local Installation
+
+If you prefer a local installation (not recommended for most users):
+
+```bash
+npm install -g pdm-ai
+pdm mcp
+```
 
 ## Available MCP Tools
 
@@ -96,4 +80,32 @@ Here's an example conversation using PDM-AI via MCP:
 ```
 User: I need to analyze customer feedback for my new mobile banking app.
 ```
-````
+
+## Special Instructions for LLMs
+
+If you are an AI assistant (LLM) using PDM-AI's MCP interface, you MUST follow this protocol:
+
+### 1. Initialize If Needed
+
+If the `.pdm` directory does NOT exist or the above check returns nothing, you MUST initialize the project before proceeding:
+
+```bash
+pdm init [--name optional-project-name]
+```
+
+Wait for initialization to complete successfully before continuing.
+
+### 2. Process in Correct Sequence
+
+Only after confirming that a project is initialized, proceed with the commands in this sequence:
+
+```bash
+# Step 1: Process input files into scenarios
+pdm scenario <input-path> [options]
+
+# Step 2: Generate JTBDs from scenarios
+pdm jtbd <scenarios-file> [options]
+
+# Step 3: Create visualizations from JTBDs
+pdm visualize <jtbds-file> [options]
+```

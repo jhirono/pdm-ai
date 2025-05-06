@@ -2,6 +2,8 @@
 
 PDM-AI is a command-line tool for transforming customer feedback into structured product insights using the Jobs-to-be-Done (JTBD) methodology. It processes customer feedback, extracts user scenarios, generates JTBDs through adaptive clustering, and creates visualizations for product teams.
 
+Check [README_MCP.md](README_MCP.md) if you want to use this CLI as MCP.
+
 ## Installation
 
 ```bash
@@ -15,7 +17,7 @@ npm install
 npm link
 ```
 
-Rename .env.example to .env and update your LLM_KEY with your openai api key.
+Rename .env.example to .env and update your LLM_KEY with your openai api key. I recommend gpt-4o. It supports reasoning models, but you will know their randomness.
 
 ## Quick Start
 
@@ -156,22 +158,10 @@ PDM-AI supports multiple languages for JTBD generation:
 
 ```bash
 # Set language in .env file
-echo "PDM_LANGUAGE=ja" >> .env
+echo "LANGUAGE=ja" >> .env
 
 # Or specify in config
 pdm config set language ja
-```
-
-### Multi-language Integration
-
-PDM-AI can handle content in multiple languages simultaneously:
-
-```bash
-# Combine English and Japanese scenarios
-pdm scenario ./english_content/ ./japanese_content.txt -o combined_scenarios.json --recursive
-
-# Generate JTBDs from combined scenarios
-pdm jtbd combined_scenarios.json -o combined_jtbds.json --layers 2
 ```
 
 ### Automatic Threshold Tuning
@@ -186,48 +176,10 @@ pdm jtbd scenarios.json -o jtbds.json --layers 2
 pdm jtbd scenarios.json -o jtbds.json --layers 2 --threshold1 0.75 --threshold2 0.85
 ```
 
-## Configuration
+## Model Context Protocol (MCP) Integration
 
-PDM-AI uses a configuration system that can be set at global and project levels:
+PDM-AI supports the Model Context Protocol (MCP), allowing AI assistants to interact directly with your feedback analysis workflow in VS Code. Check [README_MCP.md](README_MCP.md).
 
-```bash
-# Set global config
-pdm config set model gpt-4o
-
-# List current configuration
-pdm config list
-```
-
-Configuration options can also be set in a `.env` file:
-
-```
-LLM_API_KEY=xxxx                # API key for LLM provider
-LLM_MODEL=gpt-4o                # Model to use for text generation
-MAX_TOKENS=4000                 # Maximum tokens for LLM responses
-TEMPERATURE=0.7                 # Randomness parameter (0.0-1.0)
-LANGUAGE=en                     # Language (en or ja)
-```
-
-## LLM Provider Support
-
-PDM-AI supports multiple LLM providers:
-
-- OpenAI (default): I recommend gpt-4o. It supports reasoning models, but you will know their randomness.
-
-Configure the API key in your .env file:
-
-```
-LLM_API_KEY=your_openai_api_key
-```
-
-## Version Tracking
-
-PDM-AI maintains comprehensive version tracking of all artifacts:
-
-- Command history with parameters
-- Timestamps and environment information
-- Detailed change logs (added, modified, deleted entities)
-- Parent-child relationships between versions
 
 ## License
 
