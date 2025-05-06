@@ -52,6 +52,67 @@ This document outlines the implementation strategy for adding Model Context Prot
    - Create usage examples for common LLM chat interfaces
    - Document configuration options
 
+## Environment Variable Handling
+
+Based on the feedback, we need to ensure proper handling of environment variables:
+
+1. **Use .env File for Configuration**
+   - Update the MCP server to load environment variables from the `.env` file in the project root
+   - Use dotenv library to load variables from multiple locations:
+     - User's project .env (if exists)
+     - User's home directory .pdm/.env (if exists)
+     - Default variables in the MCP server
+
+2. **Configure MCP JSON**
+   - Update the MCP configuration example to use environment variables matching those in the .env file
+   - Allow for dynamic mapping of environment variables based on what's defined in the user's .env file
+   ```json
+   {
+     "mcpServers": {
+       "pdm-ai": {
+         "command": "npx",
+         "args": ["-y", "--package=pdm-ai", "pdm-mcp"],
+         "env": {
+           "LLM_API_KEY": "${OPENAI_API_KEY}",
+           "LLM_MODEL": "${LLM_MODEL}",
+           "LLM_MAX_TOKENS": "${LLM_MAX_TOKENS}",
+           "LLM_TEMPERATURE": "${LLM_TEMPERATURE}",
+           "LANGUAGE": "${LANGUAGE}"
+         }
+       }
+     }
+   }
+   ```
+
+## Handling Initialization with npx
+
+To make the MCP server usable without requiring global installation or explicit initialization:
+
+1. **Auto-Initialization Logic**
+   - Implement smart auto-initialization in the MCP server that:
+     - Detects if running in a pdm-ai project (checks for .pdm directory)
+     - If not in a pdm project, creates a temporary project structure in memory
+     - For parsing operations, uses the current directory as the working directory
+   
+2. **Temporary Project Mode**
+   - When used via npx without prior initialization:
+     - Create an in-memory or temporary project structure
+     - Use OS temp directory for outputs if no specific output path provided
+     - Return results directly through the MCP response instead of relying on file outputs
+     - Inform user about temporary mode and how to initialize a persistent project
+
+3. **Stateless Operation Support**
+   - Make tools work in a more stateless fashion:
+     - Accept raw content in addition to file paths
+     - Allow returning results directly in the response
+     - Support relative paths based on current working directory
+   
+4. **Graceful Fallbacks**
+   - Implement fallbacks for missing configuration:
+     - Use default models when no model specified
+     - Create temporary storage when no project directory available
+     - Default to sensible output formats when none specified
+
 ## Technical Implementation Details
 
 ### Directory Structure
@@ -61,66 +122,88 @@ src/
   mcp/
     index.js         # Main entry point for MCP server
     server.js        # MCP server implementation
-    tools/           # Tool implementations
-      init.js        # Project initialization tool
-      scenario.js    # Scenario parsing tool
-      jtbd.js        # JTBD management tools
-      visualize.js   # Visualization tools
-    resources/       # Resource implementations
-      config.js      # Project configuration resources
-      data.js        # Data access resources
+    adapters.js      # Parameter adapters for command integration
     utils/           # MCP-specific utilities
       session.js     # Session management
       errors.js      # Error handling helpers
+      temp-project.js # Temporary project handling
 ```
 
-### MCP Server Implementation
+### Streamlined Implementation Approach
 
-The server will be built using the [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) library, with FastMCP as a reference. Key components include:
+To avoid duplication between `src/commands/` and `src/mcp/tools/`, we'll implement a more efficient approach:
 
-1. **Server Configuration**
+1. **Direct Command Integration**
+   - The MCP server will directly use the existing command implementations from `src/commands/`
+   - Eliminate the redundant tool files in `src/mcp/tools/`
+   - Use a simple adapter pattern to transform between MCP parameters and command parameters
+
+2. **Adapter Pattern**
    ```javascript
-   const server = new McpServer({
-     name: "pdm-ai",
-     version: "0.1.0",
-     instructions: "PDM-AI helps transform customer feedback into structured product insights using Jobs-to-be-Done methodology."
-   });
+   // src/mcp/adapters.js
+   const initCommand = require('../commands/init');
+   const scenarioCommand = require('../commands/scenario');
+   const jtbdCommand = require('../commands/jtbd');
+   const visualizeCommand = require('../commands/visualize');
+   
+   // Adapter for init command
+   exports.initAdapter = async (params) => {
+     try {
+       const projectName = params.name;
+       const projectDir = params.directory || process.cwd();
+       
+       // Directly call the existing command
+       const result = await initCommand(projectName, projectDir);
+       
+       return {
+         success: true,
+         projectName: result.projectName,
+         projectDir: result.projectDir,
+         message: `Successfully initialized PDM project "${result.projectName}" at ${result.projectDir}`
+       };
+     } catch (error) {
+       return { success: false, error: error.message };
+     }
+   };
+   
+   // Similar adapters for other commands
+   // ...
    ```
 
-2. **Tool Registration Pattern**
+3. **Simplified Server Registration**
    ```javascript
-   server.tool("parseScenarios", {
-     description: "Extract user scenarios from input text",
+   // In server.js
+   const { initAdapter, scenarioAdapter, jtbdAdapter, visualizeAdapter } = require('./adapters');
+   
+   // Register tools using adapters
+   server.tool("initProject", {
+     description: "Initialize a new PDM project structure",
      parameters: z.object({
-       source: z.string().describe("Source text or file path to process"),
-       recursive: z.boolean().optional().describe("Process directories recursively")
+       name: z.string().optional().describe("Project name (defaults to directory name)"),
+       directory: z.string().optional().describe("Project directory (defaults to current directory)")
      }),
-     execute: async (params) => {
-       // Implementation using existing scenario parsing functionality
-       // ...
-     }
+     execute: initAdapter
    });
+   
+   // Other tool registrations...
    ```
 
-3. **Resource Registration Pattern**
-   ```javascript
-   server.resource("jtbds", new ResourceTemplate("jtbd://{id?}", {
-     list: async () => {
-       // Return list of available JTBDs
-     },
-     load: async (uri) => {
-       // Load specific JTBD data
-       const id = uri.searchParams.get("id");
-       // ...
-     }
-   }));
-   ```
+This approach has several advantages:
+- **Single Source of Truth**: Core functionality exists in only one place
+- **Consistency**: CLI and MCP behavior will always stay in sync
+- **Reduced Maintenance**: Updates to functionality only need to be made once
+- **Simpler Structure**: Fewer files to maintain and understand
+
+The adapters' only responsibility will be:
+1. Convert MCP parameters to the format expected by commands
+2. Handle temporary project context if needed
+3. Format command results into MCP-friendly responses
 
 ### Local Development Commands
 
 ```bash
 # Install dependencies
-npm install @modelcontextprotocol/sdk zod
+npm install @modelcontextprotocol/sdk zod dotenv
 
 # Run MCP server in stdio mode for testing
 node src/mcp/index.js
@@ -128,8 +211,8 @@ node src/mcp/index.js
 # Test with MCP Inspector
 npx @modelcontextprotocol/inspector
 
-# Local testing with configuration
-PDM_CONFIG_PATH=/path/to/config node src/mcp/index.js
+# Local testing with .env file
+node src/mcp/index.js
 ```
 
 ### MCP Configuration (for clients)
@@ -138,28 +221,14 @@ PDM_CONFIG_PATH=/path/to/config node src/mcp/index.js
 {
   "mcpServers": {
     "pdm-ai": {
-      "command": "node",
-      "args": ["./src/mcp/index.js"],
-      "env": {
-        "PDM_CONFIG_PATH": "${HOME}/.pdm/config.json",
-        "LLM_API_KEY": "${OPENAI_API_KEY}"
-      }
-    }
-  }
-}
-```
-
-### NPX Configuration (for production)
-
-```json
-{
-  "mcpServers": {
-    "pdm-ai": {
       "command": "npx",
-      "args": ["-y", "--package=pdm-ai", "pdm-ai-mcp"],
+      "args": ["-y", "--package=pdm-ai", "pdm-mcp"],
       "env": {
-        "PDM_CONFIG_PATH": "${HOME}/.pdm/config.json",
-        "LLM_API_KEY": "${OPENAI_API_KEY}"
+        "LLM_API_KEY": "${OPENAI_API_KEY}",
+        "LLM_MODEL": "${LLM_MODEL}",
+        "LLM_MAX_TOKENS": "${LLM_MAX_TOKENS}",
+        "LLM_TEMPERATURE": "${LLM_TEMPERATURE}",
+        "LANGUAGE": "${LANGUAGE}"
       }
     }
   }
@@ -169,14 +238,17 @@ PDM_CONFIG_PATH=/path/to/config node src/mcp/index.js
 ## Next Steps
 
 1. Set up the basic directory structure for MCP server implementation
-2. Install the required dependencies
-3. Implement the initial server configuration
-4. Create first MCP tool (project initialization)
-5. Test the implementation locally with MCP Inspector
-6. Gradually add more tools and resources
+2. Install the required dependencies (including dotenv)
+3. Implement environment variable loading from .env files
+4. Create smart project initialization logic for npx usage
+5. Implement the initial server configuration
+6. Create first MCP tool (scenario parsing) with support for direct content input
+7. Test the implementation locally with MCP Inspector
+8. Gradually add more tools and resources with stateless support
 
 ## References
 
 - [Model Context Protocol TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 - [FastMCP - TypeScript framework for MCP servers](https://github.com/punkpeye/fastmcp)
 - [MCP Specification](https://modelcontextprotocol.io/)
+- [Dotenv Documentation](https://github.com/motdotla/dotenv)
