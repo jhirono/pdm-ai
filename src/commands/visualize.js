@@ -25,8 +25,13 @@ function generateDefaultOutputFilename(inputFile, format) {
  * @param {string} input - Input JSON file with JTBDs and scenarios
  * @param {Object} options - Command options
  */
-async function execute(input, options) {
+async function execute(input, options = {}) {
   try {
+    // Set default options
+    options.format = options.format || 'mermaid';
+    options.perspective = options.perspective || 'jtbd';
+    options.maxNodes = options.maxNodes || 100;
+    
     const verbose = options.verbose;
     if (verbose) {
       console.log(chalk.blue(`Generating visualization from: ${input}`));

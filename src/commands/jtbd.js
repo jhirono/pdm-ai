@@ -4,13 +4,14 @@ import path from 'path';
 import config from '../utils/config.js';
 import logger from '../utils/logger.js';
 import * as jtbdGenerator from '../utils/jtbd/jtbd-generator.js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Execute the JTBD command to generate JTBDs from scenarios
  * @param {string} input - Input file containing scenarios
  * @param {Object} options - Command options
  */
-async function execute(input, options) {
+async function execute(input, options = {}) {
   try {
     logger.info(`Starting JTBD generation from ${input}`);
     
@@ -27,15 +28,20 @@ async function execute(input, options) {
     const verbose = options.verbose || false;
     const layer1Threshold = options.threshold1 || null;
     const layer2Threshold = options.threshold2 || null;
-    // Add option for preserving existing clusters (default to false, meaning recreate clusters)
     const preserveExistingClusters = options.preserveClusters || false;
+    const useMock = options.mock || false; // Add support for mock mode
     
-    // Apply options to config
-    config.model = model;
+    // Don't try to set config.model directly as it's a getter-only property
+    // Instead, use the model variable throughout the function
     
     if (verbose) {
       logger.setLevel('debug');
       logger.debug('Verbose mode enabled');
+    }
+    
+    // Log if using mock mode
+    if (useMock) {
+      logger.info('Using mock mode for JTBD generation (no API calls will be made)');
     }
     
     // Load scenarios from input file
@@ -126,10 +132,20 @@ async function execute(input, options) {
     }
     
     // Generate JTBDs using our new adaptive clustering implementation
-    const result = await jtbdGenerator.generateJTBDs(
-      combinedScenarios, // Use combined scenarios instead of just the new ones
-      generationOptions
-    );
+    // For mock mode, generate mock JTBDs instead
+    let result;
+    
+    if (useMock) {
+      // Generate mock JTBDs without making API calls
+      result = generateMockJTBDs(combinedScenarios, layers);
+      logger.info(`Generated ${result.jtbds.length} mock JTBDs for testing`);
+    } else {
+      // Use the real JTBD generator
+      result = await jtbdGenerator.generateJTBDs(
+        combinedScenarios, // Use combined scenarios instead of just the new ones
+        generationOptions
+      );
+    }
     
     // Include all scenarios in the result for better integration with visualization
     result.scenarios = combinedScenarios;
@@ -182,6 +198,31 @@ async function execute(input, options) {
     logger.error(`Error generating JTBDs: ${error.message}`);
     throw error;
   }
+}
+
+/**
+ * Generate mock JTBDs for testing purposes
+ * @param {Array} scenarios - Scenarios to process
+ * @param {number} layers - Number of layers for JTBD generation
+ * @returns {Object} Mock JTBD result
+ */
+function generateMockJTBDs(scenarios, layers) {
+  const mockJTBDs = scenarios.map((scenario, index) => ({
+    id: uuidv4(),
+    title: `Mock JTBD ${index + 1}`,
+    description: `This is a mock JTBD for scenario ${scenario.id}`,
+    layer: 1
+  }));
+
+  const result = {
+    jtbds: mockJTBDs,
+    hierarchyInfo: {
+      layer1Count: mockJTBDs.length,
+      layer2Count: layers > 1 ? Math.floor(mockJTBDs.length / 2) : 0
+    }
+  };
+
+  return result;
 }
 
 /**

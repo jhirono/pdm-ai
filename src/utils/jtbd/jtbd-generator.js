@@ -74,7 +74,7 @@ async function generateJTBDs(scenarios, options = {}) {
     );
     
     // Step 2: Get the LLM provider for JTBD generation
-    const llmProvider = getLLMProvider();
+    const llmProvider = await getLLMProvider();
     
     // Step 3: Generate first-layer JTBDs
     const firstLayerJTBDs = [];
@@ -412,19 +412,19 @@ async function generateAbstractJTBD(relatedJTBDs, llmProvider) {
 
 /**
  * Get the appropriate LLM provider based on configuration
- * @returns {Object} LLM provider
+ * @returns {Promise<Object>} LLM provider
  */
-function getLLMProvider() {
+async function getLLMProvider() {
   // Determine which model to use from config
   const model = config.model?.toLowerCase() || '';
   
   if (model.includes('claude')) {
-    return import('./providers/claude-provider.js');
+    return await import('./providers/claude-provider.js');
   } else if (model.includes('gemini') || model.includes('google')) {
-    return import('./providers/gemini-provider.js');
+    return await import('./providers/gemini-provider.js');
   } else {
     // Default to OpenAI
-    return import('./providers/openai-provider.js');
+    return await import('./providers/openai-provider.js');
   }
 }
 
