@@ -2,14 +2,14 @@
  * PDM-AI Scenario Command
  * Extract user scenarios from source files or directories
  */
-const path = require('path');
-const fs = require('fs-extra');
-const fileHandler = require('../utils/parsers/file-handler');
-const scenarioParser = require('../utils/parsers/scenario-parser');
-const mockScenarioParser = require('../utils/parsers/mock-scenario-parser');
-const config = require('../utils/config');
-const logger = require('../utils/logger');
-const { v4: uuidv4 } = require('uuid');
+import path from 'path';
+import fs from 'fs-extra';
+import fileHandler from '../utils/parsers/file-handler.js';
+import scenarioParser from '../utils/parsers/scenario-parser.js';
+import mockScenarioParser from '../utils/parsers/mock-scenario-parser.js';
+import config from '../utils/config.js';
+import logger from '../utils/logger.js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Extract scenarios from source files or directories
@@ -156,6 +156,4 @@ async function execute(source, options = {}) {
   }
 }
 
-module.exports = {
-  execute
-};
+export { execute };

@@ -8,6 +8,10 @@ This directory contains tests for the Model Context Protocol (MCP) implementatio
   - Tests scenario parsing, JTBD generation, visualization, and MCP server loading
   - Provides detailed logging and test summary
   - Handles test artifacts in a temporary directory
+- `test-mcp-client.js`: Direct MCP client test to verify callback handling
+  - Tests whether the callbackify fix resolves the "cb is not a function" error
+  - Creates temporary test files and performs direct client-server communication
+  - Tests both handshake and tool invocation interactions
 
 ## Individual Tests
 
@@ -23,6 +27,12 @@ To run the main test suite (recommended):
 
 ```bash
 node test/mcp/run-mcp-tests.js
+```
+
+To run the direct MCP client test (for verifying callback handling):
+
+```bash
+node test/mcp/test-mcp-client.js
 ```
 
 To run individual tests:
@@ -63,3 +73,8 @@ If tests fail, check the following:
 2. Required model (e.g., `gpt-4o`) is available for your API key
 3. Test files are accessible and have proper permissions
 4. No previous test processes are still running
+
+### Common Issues
+
+- **"cb is not a function" error**: This occurs when the MCP SDK expects a callback function but receives a Promise. The fix involves using `util.callbackify()` to wrap async functions in the server implementation. Run `test-mcp-client.js` to verify the fix works correctly.
+- **Initialization errors**: Make sure environment variables are properly configured, including API keys and model settings.

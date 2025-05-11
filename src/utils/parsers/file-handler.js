@@ -2,10 +2,10 @@
  * File Handler
  * Handles loading and processing text files for scenario extraction
  */
-const fs = require('fs-extra');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-const logger = require('../logger');
+import fs from 'fs-extra';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import logger from '../logger.js';
 
 class FileHandler {
   /**
@@ -215,4 +215,6 @@ class FileHandler {
   }
 }
 
-module.exports = new FileHandler();
+// Export as default
+const fileHandler = new FileHandler();
+export default fileHandler;

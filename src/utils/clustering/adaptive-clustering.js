@@ -1,5 +1,5 @@
 // src/utils/clustering/adaptive-clustering.js
-const logger = require('../logger');
+import logger from '../logger.js';
 
 /**
  * Find the optimal threshold for clustering using binary search
@@ -111,6 +111,4 @@ async function findOptimalThreshold(similarityMatrix, items, clusterFunction, op
   };
 }
 
-module.exports = {
-  findOptimalThreshold
-};
+export { findOptimalThreshold };

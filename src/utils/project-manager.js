@@ -2,10 +2,10 @@
  * Project Manager utility for PDM-AI
  * Handles project initialization, directory structure management, and versioning
  */
-const fs = require('fs-extra');
-const path = require('path');
-const config = require('./config');
-const logger = require('./logger');
+import fs from 'fs-extra';
+import path from 'path';
+import config from './config.js';
+import logger from './logger.js';
 
 class ProjectManager {
   /**
@@ -197,4 +197,5 @@ Run \`pdm scenario\` on files in this directory to extract user scenarios.
   }
 }
 
-module.exports = new ProjectManager();
+const projectManager = new ProjectManager();
+export default projectManager;

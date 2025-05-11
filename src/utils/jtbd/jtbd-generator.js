@@ -1,8 +1,8 @@
 // src/utils/jtbd/jtbd-generator.js
-const { v4: uuidv4 } = require('uuid');
-const logger = require('../logger');
-const config = require('../config');
-const clusteringService = require('../clustering/clustering-service');
+import { v4 as uuidv4 } from 'uuid';
+import logger from '../logger.js';
+import config from '../config.js';
+import * as clusteringService from '../clustering/clustering-service.js';
 
 /**
  * Generate JTBDs from scenarios with adaptive clustering
@@ -419,16 +419,16 @@ function getLLMProvider() {
   const model = config.model?.toLowerCase() || '';
   
   if (model.includes('claude')) {
-    return require('./providers/claude-provider');
+    return import('./providers/claude-provider.js');
   } else if (model.includes('gemini') || model.includes('google')) {
-    return require('./providers/gemini-provider');
+    return import('./providers/gemini-provider.js');
   } else {
     // Default to OpenAI
-    return require('./providers/openai-provider');
+    return import('./providers/openai-provider.js');
   }
 }
 
-module.exports = {
+export {
   generateJTBDs,
   generateJTBDFromCluster,
   generateAbstractJTBD

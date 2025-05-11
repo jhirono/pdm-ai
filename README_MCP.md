@@ -1,111 +1,97 @@
-# PDM-AI MCP Server Usage Guide
+# PDM-AI Model Context Protocol (MCP) Support
 
-This guide explains how to use the PDM-AI Model Context Protocol (MCP) server integration for interacting with your product requirements through LLM chat interfaces.
+This document provides information about the Model Context Protocol (MCP) support in PDM-AI.
 
-## What is MCP?
+## Overview
 
-The Model Context Protocol (MCP) is a standard protocol that allows AI assistants to access external tools and data. With PDM-AI's MCP server, you can interact with your product requirements data directly from chat interfaces like Claude.
+PDM-AI now includes support for the [Model Context Protocol (MCP)](https://github.com/mcp-c4ai/model-context-protocol), which enables integration with LLMs that support the protocol. This allows you to extract scenarios, generate JTBDs, and create visualizations directly from an AI assistant conversation.
 
-## Configure your LLM Chat Interface
+## Usage
 
-Create a configuration file for your MCP-compatible chat interface. Here's an example for Claude, Cursor, VSCode, other IDEs.
+### Starting the MCP Server
 
-```json
-{
-  "mcpServers": {
-    "pdm-ai": {
-      "command": "npx",
-      "args": ["-y", "--package=pdm-ai", "pdm-mcp"],
-      "env": {
-        "LLM_API_KEY": "your api key",
-        "LLM_MODEL": "gpt-4o",
-        "LLM_MAX_TOKENS": "4000",
-        "LLM_TEMPERATURE": "0.7",
-        "LANGUAGE": "en"
-      }
-    }
-  }
-}
-```
-
-## Alternative: Local Installation
-
-If you prefer a local installation (not recommended for most users):
+To start the PDM-AI MCP server, use the following command:
 
 ```bash
-npm install -g pdm-ai
 pdm mcp
 ```
 
-## Available MCP Tools
+This will start a stdio-based MCP server that can be used by any MCP-compatible client.
+
+### Available Tools
 
 The PDM-AI MCP server provides the following tools:
 
-### Project Initialization
-
-Initialize a new PDM project structure:
+#### 1. Extract Scenarios
 
 ```
-Prompt: "Initialize a new PDM project in the current directory called 'banking-app'"
+extract_scenarios
 ```
 
-### Scenario Parsing
+Extract user scenarios from input text files or directories.
 
-Extract user scenarios from input text:
+**Parameters:**
+- `source`: Source file or directory to process
+- `recursive` (optional): Process directories recursively (default: false)
+- `model` (optional): LLM model to use
+- `verbose` (optional): Enable verbose output (default: false)
 
-```
-Prompt: "Parse scenarios from the customer-feedback.txt file"
-```
-
-### JTBD Generation
-
-Generate Jobs-to-be-Done from user scenarios:
+#### 2. Generate JTBDs
 
 ```
-Prompt: "Generate JTBDs from the scenarios.json file"
+generate_jtbds
 ```
 
-### Visualization
+Generate JTBD statements from scenarios through adaptive clustering.
 
-Create visualizations of your project data:
+**Parameters:**
+- `source`: Input file containing scenarios
+- `output` (optional): Output file path
+- `model` (optional): LLM model to use
+- `layers` (optional): Number of JTBD layers to generate (default: 1)
+- `incremental` (optional): Process incrementally with previous results (default: false)
+- `verbose` (optional): Enable verbose output (default: false)
+
+#### 3. Visualize JTBDs
 
 ```
-Prompt: "Create a visualization of my JTBDs from project-data.json"
+visualize_jtbds
 ```
 
-## Example Conversation
+Create visual representations of JTBDs and scenarios.
 
-Here's an example conversation using PDM-AI via MCP:
+**Parameters:**
+- `input`: Input JSON file with JTBDs and scenarios
+- `format` (optional): Output format (mermaid, csv) (default: mermaid)
+- `perspective` (optional): Visualization perspective (jtbd, persona) (default: jtbd)
+- `output` (optional): Output file path
+- `filter` (optional): Filter entities by text match
+- `maxNodes` (optional): Maximum number of nodes to display (default: 100)
+- `verbose` (optional): Show detailed processing output (default: false)
 
-```
-User: I need to analyze customer feedback for my new mobile banking app.
-```
+## Integration with AI Assistants
 
-## Special Instructions for LLMs
+The PDM-AI MCP server can be integrated with any MCP-compatible client, including AI assistants that support MCP. This enables AI assistants to extract scenarios, generate JTBDs, and create visualizations directly within a conversation.
 
-If you are an AI assistant (LLM) using PDM-AI's MCP interface, you MUST follow this protocol:
+### Example Integration with Copilot GPT
 
-### 1. Initialize If Needed
+1. Start the PDM-AI MCP server:
+   ```bash
+   pdm mcp
+   ```
 
-If the `.pdm` directory does NOT exist or the above check returns nothing, you MUST initialize the project before proceeding:
+2. In the Copilot GPT interface, connect to the PDM-AI MCP server.
 
-```bash
-pdm init [--name optional-project-name]
-```
+3. Use the available tools via the AI assistant.
 
-Wait for initialization to complete successfully before continuing.
+## Technical Details
 
-### 2. Process in Correct Sequence
+The PDM-AI MCP server is implemented using the [FastMCP](https://github.com/chain-ml/fastmcp) library and supports the Model Context Protocol specification v1.0. It uses stdio for communication, which is the most compatible transport mechanism for MCP clients.
 
-Only after confirming that a project is initialized, proceed with the commands in this sequence:
+### Implementation
 
-```bash
-# Step 1: Process input files into scenarios
-pdm scenario <input-path> [options]
+The MCP server is implemented in the following files:
+- `src/mcp/index.js`: Entry point for the MCP server
+- `src/mcp/server.js`: Core implementation of the MCP server
 
-# Step 2: Generate JTBDs from scenarios
-pdm jtbd <scenarios-file> [options]
-
-# Step 3: Create visualizations from JTBDs
-pdm visualize <jtbds-file> [options]
-```
+The server leverages the existing PDM-AI command modules to perform the actual work, ensuring consistency between the CLI and MCP interfaces.

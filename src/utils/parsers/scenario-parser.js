@@ -2,11 +2,11 @@
  * Scenario Parser
  * Extracts user scenarios from text content using LLM
  */
-const { Configuration, OpenAIApi } = require('openai');
-const config = require('../config');
-const logger = require('../logger');
-const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
+import { Configuration, OpenAIApi } from 'openai';
+import config from '../config.js';
+import logger from '../logger.js';
+import { v4 as uuidv4 } from 'uuid';
+import 'dotenv/config';
 
 class ScenarioParser {
   constructor() {
@@ -381,4 +381,5 @@ IMPORTANT: Respond with ONLY the JSON object. Do not include any text outside th
   }
 }
 
-module.exports = new ScenarioParser();
+const scenarioParser = new ScenarioParser();
+export default scenarioParser;

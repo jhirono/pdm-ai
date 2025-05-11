@@ -2,9 +2,9 @@
  * PDM-AI init command
  * Initializes a new PDM project with proper directory structure and configuration
  */
-const path = require('path');
-const projectManager = require('../utils/project-manager');
-const logger = require('../utils/logger');
+import path from 'path';
+import projectManager from '../utils/project-manager.js';
+import logger from '../utils/logger.js';
 
 /**
  * Initialize a new PDM project
@@ -12,7 +12,7 @@ const logger = require('../utils/logger');
  * @param {string} projectDir - Directory to create the project in (optional)
  * @returns {Promise<object>} - Promise resolving to an object with project info
  */
-async function init(projectName, projectDir) {
+async function execute(projectName, projectDir) {
   try {
     // If no project directory specified, use current directory
     const targetDir = projectDir || process.cwd();
@@ -65,4 +65,4 @@ async function init(projectName, projectDir) {
   }
 }
 
-module.exports = init;
+export { execute };

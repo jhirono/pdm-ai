@@ -13,6 +13,7 @@ docs/
 .git/
 .gitignore
 .env
+!.env.example
 .DS_Store
 .npmignore
 

@@ -1,9 +1,9 @@
 // src/commands/jtbd.js
-const fs = require('fs-extra');
-const path = require('path');
-const config = require('../utils/config');
-const logger = require('../utils/logger');
-const jtbdGenerator = require('../utils/jtbd/jtbd-generator');
+import fs from 'fs-extra';
+import path from 'path';
+import config from '../utils/config.js';
+import logger from '../utils/logger.js';
+import * as jtbdGenerator from '../utils/jtbd/jtbd-generator.js';
 
 /**
  * Execute the JTBD command to generate JTBDs from scenarios
@@ -275,6 +275,4 @@ function getDefaultOutputPath(inputFile) {
   return path.join(outputDir, `${parsedPath.name.split('_')[0]}-jtbds.json`);
 }
 
-module.exports = {
-  execute
-};
+export { execute };

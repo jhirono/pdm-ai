@@ -462,6 +462,8 @@ ${mermaidContent}
   };
 }
 
-module.exports = {
+const mermaidGenerator = {
   generateMermaidDiagram
 };
+
+export default mermaidGenerator;

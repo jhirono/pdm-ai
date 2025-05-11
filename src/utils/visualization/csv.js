@@ -3,8 +3,8 @@
  * Handles the generation of CSV files for JTBDs and scenarios for Figma and Miro
  */
 
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'path';
 
 /**
  * Escape text for CSV format
@@ -26,7 +26,7 @@ function escapeCSV(text) {
  * @param {string} outputPath - Base output path
  * @returns {Object} Result object with file paths and stats
  */
-async function generateCSVFiles(data, options, outputPath) {
+export async function generateCSVFiles(data, options, outputPath) {
   // Initialize stats for tracking
   const stats = {
     fileCount: 0,
@@ -276,7 +276,3 @@ async function generateCSVFiles(data, options, outputPath) {
   
   return result;
 }
-
-module.exports = {
-  generateCSVFiles
-};

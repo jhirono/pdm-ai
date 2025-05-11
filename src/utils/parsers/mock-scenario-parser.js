@@ -2,8 +2,8 @@
  * Mock Scenario Parser
  * For testing: Returns predefined scenarios without making API calls
  */
-const { v4: uuidv4 } = require('uuid');
-const logger = require('../logger');
+import { v4 as uuidv4 } from 'uuid';
+import logger from '../logger.js';
 
 class MockScenarioParser {
   /**
@@ -63,4 +63,5 @@ class MockScenarioParser {
   }
 }
 
-module.exports = new MockScenarioParser();
+const mockScenarioParser = new MockScenarioParser();
+export default mockScenarioParser;

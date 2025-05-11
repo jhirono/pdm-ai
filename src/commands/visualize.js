@@ -3,10 +3,10 @@
  * Generates visual representations of JTBDs and scenarios
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
-const visualization = require('../utils/visualization');
+import fs from 'fs-extra';
+import path from 'path';
+import chalk from 'chalk';
+import * as visualization from '../utils/visualization/index.js';
 
 /**
  * Generate a default output filename based on the input file and format
@@ -132,6 +132,8 @@ async function execute(input, options) {
       }
     }
     
+    return outputPath;
+    
   } catch (error) {
     console.error(chalk.red(`Error: ${error.message}`));
     if (options.verbose) {
@@ -141,4 +143,4 @@ async function execute(input, options) {
   }
 }
 
-module.exports = { execute };
+export { execute };
