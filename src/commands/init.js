@@ -2,16 +2,17 @@
  * PDM-AI init command
  * Initializes a new PDM project with proper directory structure and configuration
  */
-const path = require('path');
-const projectManager = require('../utils/project-manager');
-const logger = require('../utils/logger');
+import path from 'path';
+import projectManager from '../utils/project-manager.js';
+import logger from '../utils/logger.js';
 
 /**
  * Initialize a new PDM project
  * @param {string} projectName - Name of the project (optional)
  * @param {string} projectDir - Directory to create the project in (optional)
+ * @returns {Promise<object>} - Promise resolving to an object with project info
  */
-function init(projectName, projectDir) {
+async function execute(projectName, projectDir) {
   try {
     // If no project directory specified, use current directory
     const targetDir = projectDir || process.cwd();
@@ -25,11 +26,16 @@ function init(projectName, projectDir) {
     if (existingProject) {
       logger.warn(`A PDM project already exists at: ${existingProject}`);
       logger.info('Use existing project or choose a different directory.');
-      return false;
+      return {
+        success: false,
+        projectName: name,
+        projectDir: existingProject,
+        message: 'A PDM project already exists'
+      };
     }
     
     // Initialize the project
-    const success = projectManager.initializeProject(name, targetDir);
+    const success = await projectManager.initializeProject(name, targetDir);
     
     if (success) {
       logger.info('');
@@ -41,11 +47,22 @@ function init(projectName, projectDir) {
       logger.info('');
     }
     
-    return success;
+    return {
+      success: success,
+      projectName: name,
+      projectDir: targetDir,
+      message: success ? 'Project initialized successfully' : 'Project initialization failed'
+    };
   } catch (error) {
     logger.error(`Initialization failed: ${error.message}`);
-    return false;
+    return {
+      success: false,
+      projectName: projectName,
+      projectDir: projectDir,
+      message: `Error: ${error.message}`,
+      error: error
+    };
   }
 }
 
-module.exports = init;
+export { execute };

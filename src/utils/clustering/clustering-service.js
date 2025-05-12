@@ -1,7 +1,7 @@
 // src/utils/clustering/clustering-service.js
-const adaptiveClustering = require('./adaptive-clustering');
-const embeddingService = require('../embedding/embedding-service');
-const logger = require('../logger');
+import * as adaptiveClustering from './adaptive-clustering.js';
+import * as embeddingService from '../embedding/embedding-service.js';
+import logger from '../logger.js';
 
 /**
  * Generate hierarchical clusters from a list of items
@@ -616,7 +616,7 @@ function averageEmbeddings(embeddings, indices) {
   return result;
 }
 
-module.exports = {
+export {
   generateHierarchicalClusters,
   clusterItems,
   calculateSimilarityMatrix,

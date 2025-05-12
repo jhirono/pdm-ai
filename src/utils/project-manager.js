@@ -2,19 +2,19 @@
  * Project Manager utility for PDM-AI
  * Handles project initialization, directory structure management, and versioning
  */
-const fs = require('fs-extra');
-const path = require('path');
-const config = require('./config');
-const logger = require('./logger');
+import fs from 'fs-extra';
+import path from 'path';
+import config from './config.js';
+import logger from './logger.js';
 
 class ProjectManager {
   /**
    * Initialize a new PDM project
    * @param {string} projectName - Name of the project
    * @param {string} projectDir - Directory to create the project in
-   * @returns {boolean} - Success or failure
+   * @returns {Promise<boolean>} - Promise resolving to success or failure
    */
-  initializeProject(projectName, projectDir) {
+  async initializeProject(projectName, projectDir) {
     try {
       logger.info(`Initializing project "${projectName}" in ${projectDir}`);
       
@@ -39,7 +39,7 @@ class ProjectManager {
       config.updateProjectConfig(projectConfig);
       
       // Create directory structure
-      this.createDirectoryStructure(projectDir);
+      await this.createDirectoryStructure(projectDir);
       
       // Save project configuration
       config.saveProjectConfig();
@@ -52,7 +52,7 @@ class ProjectManager {
       }
       
       // Initialize version tracking
-      this.initializeVersionTracking(projectDir);
+      await this.initializeVersionTracking(projectDir);
       
       logger.info(`Project "${projectName}" successfully initialized`);
       return true;
@@ -65,8 +65,9 @@ class ProjectManager {
   /**
    * Create standard directory structure for a PDM project
    * @param {string} projectDir - Project directory
+   * @returns {Promise<void>}
    */
-  createDirectoryStructure(projectDir) {
+  async createDirectoryStructure(projectDir) {
     logger.debug('Creating project directory structure');
     
     const directories = [
@@ -84,22 +85,24 @@ class ProjectManager {
       path.join(projectDir, '.pdm', 'temp')
     ];
     
-    directories.forEach(dir => {
+    // Create directories sequentially
+    for (const dir of directories) {
       if (!fs.existsSync(dir)) {
         logger.debug(`Creating directory: ${dir}`);
-        fs.mkdirSync(dir, { recursive: true });
+        await fs.mkdirp(dir);
       }
-    });
+    }
     
     // Create initial README files with usage instructions
-    this.createReadmeFiles(projectDir);
+    await this.createReadmeFiles(projectDir);
   }
   
   /**
    * Create README files for project directories
    * @param {string} projectDir - Project directory
+   * @returns {Promise<void>}
    */
-  createReadmeFiles(projectDir) {
+  async createReadmeFiles(projectDir) {
     const readmeFiles = [
       {
         path: path.join(projectDir, 'README.md'),
@@ -135,19 +138,21 @@ Run \`pdm scenario\` on files in this directory to extract user scenarios.
       }
     ];
     
-    readmeFiles.forEach(file => {
+    // Write files sequentially
+    for (const file of readmeFiles) {
       if (!fs.existsSync(file.path)) {
         logger.debug(`Creating README: ${file.path}`);
-        fs.writeFileSync(file.path, file.content);
+        await fs.writeFile(file.path, file.content);
       }
-    });
+    }
   }
   
   /**
    * Initialize version tracking system
    * @param {string} projectDir - Project directory
+   * @returns {Promise<void>}
    */
-  initializeVersionTracking(projectDir) {
+  async initializeVersionTracking(projectDir) {
     logger.debug('Initializing version tracking system');
     
     const versionDir = path.join(projectDir, '.pdm', 'versions');
@@ -164,7 +169,7 @@ Run \`pdm scenario\` on files in this directory to extract user scenarios.
     };
     
     const versionPath = path.join(versionDir, 'version_0.1.0.json');
-    fs.writeJsonSync(versionPath, initialVersion, { spaces: 2 });
+    await fs.writeJson(versionPath, initialVersion, { spaces: 2 });
   }
   
   /**
@@ -192,4 +197,5 @@ Run \`pdm scenario\` on files in this directory to extract user scenarios.
   }
 }
 
-module.exports = new ProjectManager();
+const projectManager = new ProjectManager();
+export default projectManager;

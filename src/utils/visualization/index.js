@@ -3,10 +3,10 @@
  * Handles the generation of different visualization formats for JTBDs and scenarios
  */
 
-const mermaidGenerator = require('./mermaid');
-const csvGenerator = require('./csv');
-const path = require('path');
-const fs = require('fs-extra');
+import mermaidGenerator from './mermaid.js';
+import * as csvGenerator from './csv.js';
+import path from 'path';
+import fs from 'fs-extra';
 
 /**
  * Generate visualization based on input data and options
@@ -14,7 +14,7 @@ const fs = require('fs-extra');
  * @param {Object} options - Visualization options
  * @returns {Object} Result object with content and stats
  */
-async function generateVisualization(data, options) {
+export async function generateVisualization(data, options) {
   // Generate Mermaid diagrams
   if (options.format === 'mermaid' || !options.format) {
     return mermaidGenerator.generateMermaidDiagram(data, options);
@@ -36,7 +36,3 @@ async function generateVisualization(data, options) {
   // Unsupported format
   throw new Error(`Format '${options.format}' is not yet implemented.`);
 }
-
-module.exports = {
-  generateVisualization
-};

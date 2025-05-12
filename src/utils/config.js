@@ -2,10 +2,14 @@
  * Configuration utility for PDM-AI
  * Handles loading and managing configurations from different sources
  */
-const fs = require('fs-extra');
-const path = require('path');
-const dotenv = require('dotenv');
-const os = require('os');
+import fs from 'fs-extra';
+import path from 'path';
+import dotenv from 'dotenv';
+import os from 'os';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class Config {
   constructor() {
@@ -174,32 +178,41 @@ class Config {
   }
 
   /**
-   * Generate default .env file
+   * Generate default .env file based on .env.example
    * @param {string} envPath - Path to create the .env file
    * @returns {boolean} - True if successfully generated
    */
   generateEnvTemplate(envPath) {
-    const envTemplate = `# PDM-AI Configuration
+    try {
+      // First, try to find the .env.example file in the package root
+      const packageRoot = path.resolve(__dirname, '../..');
+      const envExamplePath = path.join(packageRoot, '.env.example');
+      
+      if (fs.existsSync(envExamplePath)) {
+        // Copy the example file to the destination
+        fs.copyFileSync(envExamplePath, envPath);
+        console.log(`Created .env file from .env.example. Please update it with your API key.`);
+        return true;
+      } else {
+        // Fallback to hardcoded template if .env.example is not found
+        const envTemplate = `# PDM-AI Configuration
 # -----------------------------
 # This is a project-specific configuration file.
-# PDM-AI will check for config files in the following order:
-# 1. Project-specific .env (this file)
-# 2. Global .env in ~/.pdm-config/.env
+# You must set your LLM_API_KEY below to use PDM-AI.
 #
-# You can create a global configuration by running:
-# mkdir -p ~/.pdm-config && cp .env ~/.pdm-config/
+# Get your OpenAI API key at: https://platform.openai.com/api-keys
 
-# API key for LLM provider
+# API key for LLM provider (REQUIRED)
 LLM_API_KEY=
 
 # Model to use for text generation 
 LLM_MODEL=gpt-4o
 
 # Maximum tokens for LLM responses
-MAX_TOKENS=4000
+LLM_MAX_TOKENS=4000
 
 # Randomness parameter (0.0-1.0)
-TEMPERATURE=0.7
+LLM_TEMPERATURE=0.7
 
 # Language (en or ja)
 LANGUAGE=en
@@ -208,9 +221,10 @@ LANGUAGE=en
 LOG_LEVEL=info
 `;
 
-    try {
-      fs.writeFileSync(envPath, envTemplate);
-      return true;
+        fs.writeFileSync(envPath, envTemplate);
+        console.log(`Created default .env file. Please update it with your API key.`);
+        return true;
+      }
     } catch (error) {
       console.error(`Error generating .env template: ${error.message}`);
       return false;
@@ -242,4 +256,5 @@ LOG_LEVEL=info
   }
 }
 
-module.exports = new Config();
+const config = new Config();
+export default config;

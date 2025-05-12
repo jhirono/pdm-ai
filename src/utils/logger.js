@@ -2,7 +2,7 @@
  * Logging utility for PDM-AI
  * Provides configurable logging with different verbosity levels
  */
-const config = require('./config');
+import config from './config.js';
 
 class Logger {
   constructor() {
@@ -111,4 +111,5 @@ class Logger {
   }
 }
 
-module.exports = new Logger();
+const logger = new Logger();
+export default logger;

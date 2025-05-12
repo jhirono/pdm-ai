@@ -1,7 +1,7 @@
 // src/utils/jtbd/providers/openai-provider.js
-const https = require('https');
-const config = require('../../config');
-const logger = require('../../logger');
+import https from 'https';
+import config from '../../config.js';
+import logger from '../../logger.js';
 
 /**
  * Generate a JTBD using OpenAI API
@@ -469,7 +469,7 @@ function makeOpenAIAPIRequest(apiKey, systemMessage, userMessage, model, maxToke
   });
 }
 
-module.exports = {
+export {
   generateJTBD,
   generateAbstractJTBD
 };

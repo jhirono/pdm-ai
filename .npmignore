@@ -7,12 +7,18 @@ run-integration-tests.sh
 docs/
 *.md
 !README.md
+!README_MCP.md
 
 # Development files
 .git/
 .gitignore
 .env
+!.env.example
 .DS_Store
+.npmignore
+
+# Scripts directory
+scripts/
 
 # Input test data
 test/inputs/
@@ -30,3 +36,9 @@ npm-debug.log*
 
 # Dependency directories that should be installed by the user
 node_modules/
+
+# Temporary directories
+.tmp/
+.temp/
+tmp/
+temp/

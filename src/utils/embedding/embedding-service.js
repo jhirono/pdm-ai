@@ -1,7 +1,7 @@
 // src/utils/embedding/embedding-service.js
-const https = require('https');
-const config = require('../config');
-const logger = require('../logger');
+import https from 'https';
+import config from '../config.js';
+import logger from '../logger.js';
 
 /**
  * Get embeddings for a list of texts
@@ -189,6 +189,4 @@ function createDummyEmbedding(text) {
   return embedding;
 }
 
-module.exports = {
-  getEmbeddings
-};
+export { getEmbeddings };
