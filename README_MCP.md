@@ -45,13 +45,13 @@ Extract user scenarios from input text files or directories.
 #### 2. Generate JTBDs
 
 ```
-generate_jtbds
+generate_jtbd
 ```
 
 Generate JTBD statements from scenarios through adaptive clustering.
 
 **Parameters:**
-- `source`: Input file containing scenarios
+- `source`: Input file(s) containing scenarios (comma-separated for multiple files)
 - `output` (optional): Output file path
 - `model` (optional): LLM model to use
 - `layers` (optional): Number of JTBD layers to generate (default: 1)
@@ -61,13 +61,13 @@ Generate JTBD statements from scenarios through adaptive clustering.
 #### 3. Visualize JTBDs
 
 ```
-visualize_jtbds
+visualize
 ```
 
 Create visual representations of JTBDs and scenarios.
 
 **Parameters:**
-- `input`: Input JSON file with JTBDs and scenarios
+- `source`: Input JSON file with JTBDs and scenarios
 - `format` (optional): Output format (mermaid, csv) (default: mermaid)
 - `perspective` (optional): Visualization perspective (jtbd, persona) (default: jtbd)
 - `output` (optional): Output file path

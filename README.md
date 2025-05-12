@@ -82,7 +82,7 @@ pdm jtbd <input> [options]
 ```
 
 Arguments:
-- `input` - Input file containing scenarios
+- `input` - Input file(s) containing scenarios (comma-separated for multiple files)
 
 Options:
 - `-o, --output <path>` - Output file path
@@ -92,8 +92,6 @@ Options:
 - `-v, --verbose` - Enable verbose output
 - `-t1, --threshold1 <number>` - Force layer 1 clustering threshold (0.0-1.0)
 - `-t2, --threshold2 <number>` - Force layer 2 clustering threshold (0.0-1.0)
-- `-c, --preserve-clusters` - In incremental mode, preserve existing clusters
-- `-p, --previous-file <path>` - Explicitly specify previous JTBD file for incremental mode
 
 ### Create Visualizations
 
@@ -114,6 +112,14 @@ Options:
 
 ## Advanced Features
 
+### Combining Multiple Scenario Files
+
+Process scenarios from multiple source files in a single JTBD generation:
+
+```bash
+# Combine scenarios from multiple files
+pdm jtbd file1.json,file2.json -o combined_jtbds.json
+
 ### Incremental Processing
 
 Process new feedback while preserving insights from previous runs:
@@ -121,11 +127,6 @@ Process new feedback while preserving insights from previous runs:
 ```bash
 # Default: Recreate clusters with combined data (previous + new)
 pdm jtbd new_scenarios.json --incremental
-
-# Preserve existing clusters and add new data to them or create new clusters
-pdm jtbd new_scenarios.json --incremental --preserve-clusters
-# Or use the shorthand
-pdm jtbd new_scenarios.json -i -c
 ```
 
 ### Hierarchical Clustering
