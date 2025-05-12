@@ -195,15 +195,19 @@ mcp.addTool({
       }
       
       // Format response according to FastMCP expectations - using "text" type
+      // FIX: Move outputPath and success inside the JSON string in text property
       return {
         content: [
           {
             type: "text",
-            text: typeof outputData === 'string' ? outputData : JSON.stringify(outputData)
+            text: JSON.stringify({
+              data: typeof outputData === 'string' ? outputData : JSON.stringify(outputData),
+              format: visualOptions.format, // Explicitly include format type
+              outputPath: outputFile, 
+              success: true
+            })
           }
-        ],
-        outputPath: outputFile,
-        success: true
+        ]
       };
     } catch (error) {
       console.error("Error in visualize:", error);

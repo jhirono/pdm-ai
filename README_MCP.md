@@ -20,7 +20,13 @@ This will start a stdio-based MCP server that can be used by any MCP-compatible 
 
 ### Available Tools
 
-The PDM-AI MCP server provides the following tools:
+**Important:** Before using any PDM-AI tool, ensure the project is initialized. If you're working in a new environment or the `.pdm` directory doesn't exist, always run the initialization first:
+
+```
+initialize_project
+```
+
+This initializes the PDM project structure required for all other tools to function properly. You'll see a confirmation message when initialization is complete.
 
 #### 1. Extract Scenarios
 
@@ -68,6 +74,26 @@ Create visual representations of JTBDs and scenarios.
 - `filter` (optional): Filter entities by text match
 - `maxNodes` (optional): Maximum number of nodes to display (default: 100)
 - `verbose` (optional): Show detailed processing output (default: false)
+
+**Response Format:**
+- The tool will return a response with the following structure:
+  ```json
+  {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"data\":\"graph TD\\n  A[JTBD]-->B[Scenario]\\n...\",\"format\":\"mermaid\",\"outputPath\":\"/path/to/output.md\",\"success\":true}"
+      }
+    ]
+  }
+  ```
+- Key parts of the response:
+  - `data`: Contains the actual visualization content (Mermaid diagram code or CSV data)
+  - `format`: Indicates the format type (mermaid or csv)
+  - `outputPath`: Path to the saved visualization file
+  - `success`: Boolean indicating if the visualization was created successfully
+- **Important:** For Mermaid diagrams, the `data` field contains valid Mermaid syntax that can be directly rendered in any Mermaid-compatible viewer
+- **Note for LLMs:** This is a successful response, not an error. You should extract and use the Mermaid code from the `data` field
 
 ## Integration with AI Assistants
 
