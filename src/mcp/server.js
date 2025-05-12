@@ -44,15 +44,16 @@ mcp.addTool({
   }),
   execute: async ({ input, ...opts }) => {
     try {
-      const outputFile = await generateJtbd(input, opts);
-      const outputData = await fs.readJSON(outputFile);
+      // The execute function in jtbd.js returns the actual result object, not a file path
+      const result = await generateJtbd(input, opts);
       
+      // No need to read from a file since we already have the result object
       // Format response according to FastMCP expectations - using "text" type
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(outputData)
+            text: JSON.stringify(result)
           }
         ]
       };
