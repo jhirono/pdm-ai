@@ -97,7 +97,7 @@ mcp.addTool({
   name: "generate_jtbd",
   description: "Generate JTBD statements",
   parameters: z.object({ 
-    source: z.string(), 
+    source: z.string().describe("Input file(s) containing scenarios (comma-separated for multiple files)"), 
     layers: z.number().default(1),
     output: z.string().optional()
   }),
@@ -119,7 +119,10 @@ mcp.addTool({
       } else {
         const outputDir = path.join(currentDir, '.pdm', 'outputs', 'jtbds');
         fs.ensureDirSync(outputDir);
-        const filename = path.basename(source, path.extname(source)) + '-jtbds.json';
+        
+        // Get base filename from the first source file if multiple are specified
+        const firstSource = source.split(',')[0].trim();
+        const filename = path.basename(firstSource, path.extname(firstSource)) + '-jtbds.json';
         outputOptions.output = path.join(outputDir, filename);
       }
       
@@ -195,7 +198,6 @@ mcp.addTool({
       }
       
       // Format response according to FastMCP expectations - using "text" type
-      // FIX: Move outputPath and success inside the JSON string in text property
       return {
         content: [
           {
